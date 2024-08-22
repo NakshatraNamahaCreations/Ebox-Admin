@@ -12,6 +12,7 @@ import SpotlightBanner from "./component/pages/SpotlightBanner";
 import VendorProductList from "./component/pages/vendor/VendorProductList";
 import Schedules from "./component/pages/Schedules";
 import Cart from "./stateManagement/Cart";
+import Add_Product from "./component/Add_Product";
 
 // https://github.com/NakshatraNamahaCreations/eventboxadmin.git
 
@@ -131,6 +132,19 @@ function App() {
                 <>
                   <Header />
                   <Schedules />
+                </>
+              }
+            />
+          }
+        />
+        <Route
+          path="/add-product"
+          element={
+            <Layout
+              children={
+                <>
+                  <Header />
+                  <Add_Product />
                 </>
               }
             />
