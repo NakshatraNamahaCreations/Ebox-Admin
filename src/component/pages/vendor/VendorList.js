@@ -1,18 +1,56 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { scheduleData } from "../../../global-data/booking";
 import DataTable from "react-data-table-component";
 import "../../../styles/booking-history.css";
 import { FaEye } from "react-icons/fa";
 import { RxSlash } from "react-icons/rx";
-import { MdDelete } from "react-icons/md";
+import { LuBoxes } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
+import { get } from "../../../api-services/apiHelper";
+import { apiUrl } from "../../../api-services/apiContents";
+import Loader from "../../loader/Loader";
+import GlobalContext from "../../../hooks/GlobalProvider";
 
 function VendorList() {
   const Navigate = useNavigate();
+  const [vendors, setVendors] = useState([]);
+  // const [vendorsLength, setVendorsLength] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const { setGlobalData } = useContext(GlobalContext);
+
+  useEffect(() => {
+    const fetchVendors = async () => {
+      setIsLoading(true);
+      try {
+        const data = await get(apiUrl.GET_ALL_VENDOR);
+        setVendors(data.reverse());
+        setGlobalData((prevData) => ({
+          ...prevData,
+          vendorsLength: data.length, // Set vendorsLength in globalData
+        }));
+      } catch (error) {
+        console.error("Failed to fetch vendors:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchVendors();
+  }, [setGlobalData]);
+  // console.log("vendors", vendors);
+
   const navigateToProductPage = (row) => {
     Navigate("/vendor/vendor-products", {
       state: {
-        row,
+        vendorId: row._id,
+        vendorName: row.vendor_name,
+      },
+    });
+  };
+  const viewVendorDetails = (row) => {
+    Navigate("/vendor/vendor-profile", {
+      state: {
+        vendor: row,
       },
     });
   };
@@ -38,7 +76,7 @@ function VendorList() {
             }
             // onClick={() => handleOpeningCanvas(row)}
           >
-            {row.name}
+            {row.vendor_name}
           </div>
         </>
       ),
@@ -46,12 +84,18 @@ function VendorList() {
     },
     {
       name: "Email",
-      selector: (row) => "kiru@gmail.com",
+      selector: (row) => row.email,
+
       sortable: true,
     },
     {
       name: "Mobile",
-      selector: (row) => "+91" + " " + row.mobileNumber,
+      selector: (row) => "+91" + " " + row.mobile_number,
+      sortable: true,
+    },
+    {
+      name: "Status",
+      selector: (row) => "+91",
       sortable: true,
     },
     {
@@ -59,22 +103,12 @@ function VendorList() {
       selector: (row) => (
         <>
           <div
-            style={{
-              display: "flex",
-            }}
-            onClick={() => navigateToProductPage(row)}
+            style={{ cursor: "pointer" }}
+            title="Delete"
+            onClick={() => viewVendorDetails(row)}
           >
-            <div style={{ cursor: "pointer" }} title="View">
-              <FaEye size={16} color="#2F4E9E" />
-              &nbsp;Products
-            </div>
-            <div>
-              <RxSlash size={16} />
-            </div>
-            <div style={{ cursor: "pointer" }} title="Delete">
-              <MdDelete size={16} color="#E91E63" />
-              &nbsp;Delete
-            </div>
+            <FaEye size={16} color="#2F4E9E" />
+            &nbsp;View
           </div>
         </>
       ),
@@ -84,12 +118,16 @@ function VendorList() {
 
   return (
     <div>
+      {isLoading && <Loader />}
       <br />
-      <DataTable
-        columns={columns}
-        data={scheduleData}
-        //   defaultSortFieldId={1}
-      />
+      {!isLoading && (
+        <DataTable
+          columns={columns}
+          data={vendors}
+          pagination
+          //   defaultSortFieldId={1}
+        />
+      )}
     </div>
   );
 }

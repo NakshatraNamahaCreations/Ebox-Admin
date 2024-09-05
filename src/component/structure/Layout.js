@@ -3,7 +3,7 @@ import SideNav from "./SideNav";
 
 function Layout({ children }) {
   return (
-    <div style={{ backgroundColor: "#f4f9fd" }}>
+    <div style={{ backgroundColor: "#f4f9fd", height: "auto" }}>
       <div className="row me-0" style={{ padding: "24px" }}>
         <div className="col-md-2">
           <SideNav />

@@ -13,6 +13,8 @@ import VendorProductList from "./component/pages/vendor/VendorProductList";
 import Schedules from "./component/pages/Schedules";
 import Cart from "./stateManagement/Cart";
 import Add_Product from "./component/Add_Product";
+import Login from "./component/pages/controls/Login";
+import VendorDetails from "./component/pages/vendor/VendorDetails";
 
 // https://github.com/NakshatraNamahaCreations/eventboxadmin.git
 
@@ -33,6 +35,7 @@ function App() {
             />
           }
         />
+        <Route path="/login" element={<Login />} />
         <Route
           path="/spotlight-banner"
           element={
@@ -106,6 +109,19 @@ function App() {
                 <>
                   <Header />
                   <VendorList />
+                </>
+              }
+            />
+          }
+        />
+        <Route
+          path="/vendor/vendor-profile"
+          element={
+            <Layout
+              children={
+                <>
+                  <Header />
+                  <VendorDetails />
                 </>
               }
             />

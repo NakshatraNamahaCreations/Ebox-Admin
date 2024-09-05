@@ -7,6 +7,7 @@ import {
   categoryGenSet,
 } from "../global-data/global-data";
 import axios from "axios";
+import { apiUrl } from "../api-services/apiContents";
 
 function Add_Product() {
   const [galleryImages, setGalleryImages] = useState([]);
@@ -91,8 +92,8 @@ function Add_Product() {
     try {
       // Prepare form data
       const formData = new FormData();
-      formData.append("vendor_id", "66b9b275d8c3d839b7d67772");
-      formData.append("vendor_name", "Achudhan");
+      formData.append("vendor_id", "66d00be20c792cf443a42280");
+      formData.append("vendor_name", "Suman Raj");
       formData.append("product_type", "sell");
       formData.append("product_name", productName);
       formData.append("product_price", productPrice);
@@ -108,6 +109,8 @@ function Add_Product() {
       formData.append("country_of_orgin", countryOfOrigin);
       formData.append("manufacture_name", manufactureName);
       formData.append("product_color", color);
+      formData.append("shop_name", "Mani Traders");
+
       formData.append(
         "Specifications",
         JSON.stringify(
@@ -140,9 +143,9 @@ function Add_Product() {
 
       // Axios configuration
       const config = {
-        url: "product/addproduct",
+        url: apiUrl.ADD_PRODUCT,
         method: "post",
-        baseURL: "http://localhost:9000/api/",
+        baseURL: apiUrl.BASEURL,
         headers: { "Content-Type": "multipart/form-data" },
         data: formData,
       };
@@ -187,7 +190,7 @@ function Add_Product() {
       Product Image(s){" "}
       <input
         className="mb-1"
-        accept="image/jpeg,image/jpg,image/png"
+        accept="image/jpeg,image/jpg,image/png,image/webp"
         id="icon-button-file"
         type="file"
         multiple

@@ -42,9 +42,9 @@ function Invoice() {
           <div className="col-md-6 ps-5 pb-4 col-sm-6">
             <div
               style={{
-                color: "#2F4E9E",
+                color: "black",
                 textDecoration: "none",
-                textShadow: "-2px 2px #ddd6cd",
+                // textShadow: "-2px 2px #ddd6cd",
                 fontSize: "30px",
                 fontWeight: "bold",
               }}

@@ -88,11 +88,11 @@
 /* dahsbaord======================== */
 
 .headerTitle-0-1-70 {
-  color: #ea5362;
+  color: black;
   /* #5f5f5f; */
   font-size: 30px;
   font-weight: bold;
-  text-shadow: -2px 2px #ddd6cd;
+  /* text-shadow: -1px 1px #ddd6cd; */
   /* line-height: 49px; */
 }
 .headerDesc-0-1-71 {
@@ -107,6 +107,9 @@
 }
 .border-left-accent {
   border-left: 3px solid #00007c !important;
+}
+.border-top-for-all-border{
+  border-top: 3px solid #90e447 !important;
 }
 .card-border-1 {
   border-left: 3px solid #00007c !important;
@@ -179,7 +182,14 @@
   background-color: blue !important;
   color: white !important;
 }
-
+.vendor-profile-background-imge{
+  background-image: url("../public//img//profile-bg.jpg");
+  background-size: cover !important;
+  background-position: 50% !important;
+  position: relative;
+  overflow: hidden;
+  height: 200px;
+}
 @media print {
   body * {
     visibility: hidden;

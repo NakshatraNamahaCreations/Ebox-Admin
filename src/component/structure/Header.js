@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { scheduleData } from "../../global-data/booking";
+import GlobalContext from "../../hooks/GlobalProvider";
 
 function Header() {
   const navigate = useNavigate();
-
+  const { globalData } = useContext(GlobalContext);
   const location = useLocation();
   const { pathname } = location;
+
   switch (pathname) {
     case "/dashboard":
       return (
@@ -49,7 +51,7 @@ function Header() {
       return (
         <div className="d-flex" style={{ justifyContent: "space-between" }}>
           <div className="headerTitle-0-1-70">Invoice</div>
-          <div className="headerDesc-0-1-71">
+          {/* <div className="headerDesc-0-1-71">
             <div
               // href="/booking/booking-details"
               style={{
@@ -64,14 +66,17 @@ function Header() {
               <IoIosArrowBack />
               Back
             </div>
-          </div>
+          </div> */}
         </div>
       );
     case "/vendor-list":
       return (
         <div>
           <div className="headerTitle-0-1-70">
-            Vendor List ({scheduleData.length})
+            Vendor List{" "}
+            {globalData?.vendorsLength === 0 ? null : (
+              <>({globalData?.vendorsLength})</>
+            )}
           </div>
         </div>
       );

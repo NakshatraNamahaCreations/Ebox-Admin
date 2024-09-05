@@ -6,15 +6,18 @@ import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { GlobalProvider } from "./hooks/GlobalProvider";
 // import { Provider } from "react-redux";
 // import store from "./stateManagement/redux/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <Provider store={store}>
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <GlobalProvider>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </GlobalProvider>
   // </Provider>
 );
 

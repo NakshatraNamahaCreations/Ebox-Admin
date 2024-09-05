@@ -12,7 +12,9 @@ import {
   FaCalendar,
   FaServicestack,
 } from "react-icons/fa";
+import { LuBoxes } from "react-icons/lu";
 import { SlCalender } from "react-icons/sl";
+import { BsFillPeopleFill } from "react-icons/bs";
 import {
   FaNoteSticky,
   FaMobileRetro,
@@ -28,10 +30,10 @@ function SideNav() {
   const location = useLocation();
   const { pathname } = location;
   const getColor = (path) => {
-    return pathname === path ? "#ea5362" : "";
+    return pathname === path ? "#90e447" : "";
   };
   const getBorderLeft = (path) => {
-    return pathname === path ? "2px solid #ea5362" : "";
+    return pathname === path ? "2px solid #90e447" : "";
   };
 
   return (
@@ -44,9 +46,9 @@ function SideNav() {
             <a
               href="/"
               style={{
-                color: "#ea5362",
+                color: "black",
                 textDecoration: "none",
-                textShadow: "-2px 2px #ddd6cd",
+                textShadow: "-1px 1px #ddd6cd",
                 fontSize: "25px",
                 fontWeight: "bold",
                 letterSpacing: 1,
@@ -57,6 +59,11 @@ function SideNav() {
                 alt="logo"
                 style={{ width: "65%" }}
               /> */}
+              <LuBoxes
+                size={25}
+                color="#90e447"
+                style={{ marginTop: "-7px" }}
+              />{" "}
               EVENT BOX
             </a>
           </div>
@@ -100,6 +107,13 @@ function SideNav() {
             >
               Booking Schedules
             </MenuItem>
+          </SubMenu>
+          {/* vendor -list*/}
+          <SubMenu
+            className="sidebar-font-menu"
+            label="People"
+            icon={<BsFillPeopleFill className="sidebar-icons" />}
+          >
             <MenuItem
               className="sidebar-font-submenu"
               component={<Link to="/user-list" />}
@@ -108,19 +122,11 @@ function SideNav() {
                 color: getColor("/user-list"),
               }}
             >
-              User List
+              User
             </MenuItem>
-          </SubMenu>
-          {/* vendor -list*/}
-          <SubMenu
-            className="sidebar-font-menu"
-            label="Service"
-            icon={<FaServicestack className="sidebar-icons" />}
-          >
             <MenuItem
-              className="sidebar-font-menu"
+              className="sidebar-font-submenu"
               component={<Link to="/vendor-list" />}
-              // icon={<FaUsers className="sidebar-icons" />}
               style={{
                 borderLeft: getBorderLeft("/vendor-list"),
                 color: getColor("/vendor-list"),
@@ -136,7 +142,7 @@ function SideNav() {
                 color: getColor("#"),
               }}
             >
-              People
+              Team
             </MenuItem>
           </SubMenu>
 

@@ -68,9 +68,10 @@ function SpotlightBanner() {
     <div className="row mt-2">
       <div className="col-md-6">
         <div
+          className="border-top-for-all-border"
           style={{
             backgroundColor: "white",
-            borderTop: "3px solid #ea5362",
+
             // rgb(95 95 95)
             borderRadius: "5px",
           }}
@@ -112,9 +113,9 @@ function SpotlightBanner() {
       </div>
       <div className="col-md-6">
         <div
+          className="border-top-for-all-border"
           style={{
             backgroundColor: "white",
-            borderTop: "3px solid #ea5362",
             borderRadius: "5px",
           }}
         >
@@ -155,8 +156,8 @@ const styles = {
     border: "1px solid #ccc",
   },
   buttonForEveything: {
-    backgroundColor: "#ea5362",
-    border: "#ea5362",
+    backgroundColor: "#90e447",
+    border: "#7ac536",
     color: "white",
     borderRadius: "3px",
     fontSize: "14px",

@@ -34,11 +34,10 @@ function BookingDetails() {
     <div className="mt-2">
       <div className="p-5" style={{ backgroundColor: "white" }}>
         <table
-          className="table"
+          className="table border-top-for-all-border"
           style={{
             backgroundColor: "white",
             border: "1px solid #f4f4f4",
-            borderTop: "3px solid #ea5362",
             borderTopLeftRadius: "5px",
             borderTopRightRadius: "5px",
           }}
@@ -164,7 +163,7 @@ function BookingDetails() {
             style={styles.buttonForEveything}
             onClick={() => navigateToInvoice()}
           >
-            <i className="fa fa-download"></i>Generate Invoice
+            <i className="fa fa-download"></i> Generate Invoice
           </button>
         </div>
       </div>
@@ -193,8 +192,8 @@ const styles = {
     fontSize: "14px",
   },
   buttonForEveything: {
-    backgroundColor: "#ea5362",
-    border: "#ea5362",
+    backgroundColor: "#90e447",
+    border: "#7ac539",
     color: "white",
     borderRadius: "3px",
     fontSize: "14px",

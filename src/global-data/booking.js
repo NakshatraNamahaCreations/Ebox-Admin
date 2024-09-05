@@ -272,23 +272,72 @@ const product = [
   },
 ];
 
-export { scheduleData, invoiceData, bannerData, scheduleData1,product };
+const productData = [
+  {
+    id: 2232,
+    name: "Product 1",
+    quantity: 12,
+  },
+  {
+    id: 2231,
+    name: "Product 2",
+    quantity: 10,
+  },
+];
+const orderaData = [
+  {
+    order_id: 1,
+    product_id: 2232,
+    quantity: 2,
+    start_date: "04-sep-2024",
+    end_date: "06-sep-2024",
+  },
+  {
+    order_id: 2,
+    product_id: 2232,
+    quantity: 1,
+    start_date: "04-sep-2024",
+    end_date: "04-sep-2024",
+  },
+  {
+    order_id: 3,
+    product_id: 2231,
+    quantity: 4,
+    start_date: "05-sep-2024",
+    end_date: "06-sep-2024",
+  },
+  {
+    order_id: 4,
+    product_id: 2232,
+    quantity: 5,
+    start_date: "04-sep-2024",
+    end_date: "05-sep-2024",
+  },
+  {
+    order_id: 5,
+    product_id: 2231,
+    quantity: 3,
+    start_date: "04-sep-2024",
+    end_date: "05-sep-2024",
+  },
+  {
+    order_id: 6,
+    product_id: 2232,
+    quantity: 3,
+    start_date: "06-sep-2024",
+    end_date: "08-sep-2024",
+  },
+];
 
-// const scheduleData = [
-//   {
-//     title: "Lois Lane",
-//     time: "09:30 AM - 10:00 PM",
-//     date: "2024-04-01",
-//     city: "Chennai",
-//   },
-//   {
-//     title: "Clark Kent",
-//     time: "05:30 AM - 07:00 PM",
-//     date: "2024-04-01",
-//     city: "Mumbai",
-//   },
-//   // Add more events here with their respective dates and times
-// ];
+export {
+  scheduleData,
+  invoiceData,
+  bannerData,
+  scheduleData1,
+  product,
+  orderaData,
+  productData,
+};
 
 // // Assuming you have the response from somewhere
 // const response = [
