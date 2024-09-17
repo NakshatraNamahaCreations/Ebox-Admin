@@ -1,7 +1,7 @@
 import React from "react";
 import { Table } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
-import { invoiceData } from "../../global-data/booking";
+import { invoiceData } from "../../../global-data/booking";
 
 function Invoice() {
   let location = useLocation();

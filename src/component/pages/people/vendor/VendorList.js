@@ -1,15 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { scheduleData } from "../../../global-data/booking";
 import DataTable from "react-data-table-component";
-import "../../../styles/booking-history.css";
+import "../../../../styles/booking-history.css";
 import { FaEye } from "react-icons/fa";
-import { RxSlash } from "react-icons/rx";
-import { LuBoxes } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import { get } from "../../../api-services/apiHelper";
-import { apiUrl } from "../../../api-services/apiContents";
-import Loader from "../../loader/Loader";
-import GlobalContext from "../../../hooks/GlobalProvider";
+import { get } from "../../../../api-services/apiHelper";
+import { apiUrl } from "../../../../api-services/apiContents";
+import Loader from "../../../loader/Loader";
+import GlobalContext from "../../../../hooks/GlobalProvider";
 
 function VendorList() {
   const Navigate = useNavigate();
@@ -39,14 +36,6 @@ function VendorList() {
   }, [setGlobalData]);
   // console.log("vendors", vendors);
 
-  const navigateToProductPage = (row) => {
-    Navigate("/vendor/vendor-products", {
-      state: {
-        vendorId: row._id,
-        vendorName: row.vendor_name,
-      },
-    });
-  };
   const viewVendorDetails = (row) => {
     Navigate("/vendor/vendor-profile", {
       state: {
@@ -90,12 +79,16 @@ function VendorList() {
     },
     {
       name: "Mobile",
-      selector: (row) => "+91" + " " + row.mobile_number,
+      selector: (row) => "+91" + "-" + row.mobile_number,
       sortable: true,
     },
     {
       name: "Status",
-      selector: (row) => "+91",
+      selector: (row) => (
+        <div style={{ color: row.is_approved === true ? "green" : "red" }}>
+          {row.is_approved === true ? "Approved" : "Not Approved"}
+        </div>
+      ),
       sortable: true,
     },
     {

@@ -21,14 +21,33 @@ function VendorDetails() {
       </div>
 
       <div className="vendor-profile-background-imge"></div>
-      <div className="row" style={{ position: "absolute", top: "130px" }}>
-        <div className="col-md-3" style={{ height: "5.8rem", width: "5.8rem" }}>
+      <div className="row">
+        <div
+          className="col-md-8"
+          style={{ position: "absolute", top: "110px" }}
+        >
+          <div className="d-flex p-3 mx-2">
+            <img
+              src={`${apiUrl.IMAGEURL}${vendor.shop_image_or_logo}`}
+              style={{ width: "80px", height: "80px", borderRadius: "50%" }}
+            />
+            <div className="mx-3 pt-3">
+              <h4 style={{ fontSize: "20px", color: "#90e447" }}>
+                {vendor.vendor_name}{" "}
+              </h4>
+              <h6 style={{ fontSize: "14px" }}>{vendor.profession}</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* <div style={{ position: "relative", top: "-150px", left: "40px" }}>
+        <div>
           <img
             src={`${apiUrl.IMAGEURL}${vendor.shop_image_or_logo}`}
-            style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+            style={{ width: "100px", height: "100px", borderRadius: "50%" }}
           />
         </div>
-        <div className="col-md-9">
+        <div>
           <div style={{ display: "flex" }}>
             <div>
               <h4 style={{ fontSize: "2.125rem", color: "#90e447" }}>
@@ -44,7 +63,7 @@ function VendorDetails() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

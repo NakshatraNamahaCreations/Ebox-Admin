@@ -1,11 +1,9 @@
 import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
-import { scheduleData } from "../../global-data/booking";
 import GlobalContext from "../../hooks/GlobalProvider";
 
 function Header() {
-  const navigate = useNavigate();
   const { globalData } = useContext(GlobalContext);
   const location = useLocation();
   const { pathname } = location;
@@ -18,6 +16,24 @@ function Header() {
           <div className="headerDesc-0-1-71">
             <div>Welcome Back!</div>
           </div>
+        </div>
+      );
+    case "/service/addservice":
+      return (
+        <div>
+          <div className="headerTitle-0-1-70">Services</div>
+        </div>
+      );
+    case "/service/subservice":
+      return (
+        <div>
+          <div className="headerTitle-0-1-70">Sub Service</div>
+        </div>
+      );
+    case "/service/requirements":
+      return (
+        <div>
+          <div className="headerTitle-0-1-70">Requirements</div>
         </div>
       );
     case "/booking/booking-history":
@@ -115,13 +131,33 @@ function Header() {
           <div className="headerTitle-0-1-70">Booking Schedules </div>
         </div>
       );
-    case "/free-material/add-video":
+    case "/team/team-list":
       return (
         <div>
-          <div className="headerTitle-0-1-70">Video </div>
+          <div className="headerTitle-0-1-70">Manage Teams </div>
           <div className="headerDesc-0-1-71">
-            <div>Add / view free material for your visitors</div>
+            <div className="mt-2">
+              <button
+                style={{
+                  backgroundColor: "#90e447",
+                  border: "#7ac536",
+                  color: "white",
+                  borderRadius: "3px",
+                  fontSize: "15px",
+                  padding: "5px 10px",
+                }}
+                onClick={() => window.location.assign("/team/create-team")}
+              >
+                Add Team Member
+              </button>
+            </div>
           </div>
+        </div>
+      );
+    case "/team/create-team":
+      return (
+        <div>
+          <div className="headerTitle-0-1-70">Create Teams</div>
         </div>
       );
     case "/campaigns/list":

@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/dashboard.css";
+import "../../../styles/dashboard.css";
 
 function Dashboard() {
   // Helper function to parse date strings into Date objects

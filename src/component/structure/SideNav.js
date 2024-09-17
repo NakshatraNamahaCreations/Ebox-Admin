@@ -4,27 +4,11 @@ import { Link, useLocation } from "react-router-dom";
 // import { FaBarsStaggered, FaBookOpen } from "react-icons";
 import { RiDashboardFill } from "react-icons/ri";
 // import { FaUser } from "react-icons/fa";
-import {
-  FaUsers,
-  FaGlobe,
-  FaUserAlt,
-  FaUserFriends,
-  FaCalendar,
-  FaServicestack,
-} from "react-icons/fa";
 import { LuBoxes } from "react-icons/lu";
-import { SlCalender } from "react-icons/sl";
 import { BsFillPeopleFill } from "react-icons/bs";
-import {
-  FaNoteSticky,
-  FaMobileRetro,
-  FaUniversalAccess,
-  FaRegCalendarCheck,
-} from "react-icons/fa6";
+import { FaRegCalendarCheck } from "react-icons/fa6";
 import { MdImage } from "react-icons/md";
-import { SiGoogleanalytics } from "react-icons/si";
-import { MdCampaign, MdOutlineElectricalServices } from "react-icons/md";
-import { LiaServicestack } from "react-icons/lia";
+import { MdMiscellaneousServices } from "react-icons/md";
 
 function SideNav() {
   const location = useLocation();
@@ -79,8 +63,44 @@ function SideNav() {
           >
             Dashboard
           </MenuItem>
+          <SubMenu
+            className="sidebar-font-menu"
+            label="Service Management"
+            icon={<MdMiscellaneousServices className="sidebar-icons" />}
+          >
+            <MenuItem
+              className="sidebar-font-submenu"
+              component={<Link to="/service/addservice" />}
+              style={{
+                borderLeft: getBorderLeft("/service/addservice"),
+                color: getColor("/service/addservice"),
+              }}
+            >
+              Service
+            </MenuItem>
+            <MenuItem
+              className="sidebar-font-submenu"
+              component={<Link to="/service/subservice" />}
+              style={{
+                borderLeft: getBorderLeft("/service/subservice"),
+                color: getColor("/service/subservice"),
+              }}
+            >
+              Sub Services
+            </MenuItem>
+            <MenuItem
+              className="sidebar-font-submenu"
+              component={<Link to="/service/requirements" />}
+              style={{
+                borderLeft: getBorderLeft("/service/requirements"),
+                color: getColor("/service/requirements"),
+              }}
+            >
+              Requirements
+            </MenuItem>
+          </SubMenu>
           {/* Banner */}
-          <MenuItem
+          {/* <MenuItem
             className="sidebar-font-menu"
             component={<Link to="/spotlight-banner" />}
             icon={<MdImage className="sidebar-icons" />}
@@ -90,7 +110,7 @@ function SideNav() {
             }}
           >
             Spotlight Banners
-          </MenuItem>
+          </MenuItem> */}
           {/* Booking */}
           <SubMenu
             className="sidebar-font-menu"
@@ -136,10 +156,10 @@ function SideNav() {
             </MenuItem>
             <MenuItem
               className="sidebar-font-submenu"
-              component={<Link to="#" />}
+              component={<Link to="/team/team-list" />}
               style={{
-                borderLeft: getBorderLeft("#"),
-                color: getColor("#"),
+                borderLeft: getBorderLeft("/team/team-list"),
+                color: getColor("/team/team-list"),
               }}
             >
               Team

@@ -1,11 +1,11 @@
 import React from "react";
 import DataTable from "react-data-table-component";
-import "../../styles/booking-history.css";
+import "../../../styles/booking-history.css";
 import { FaEye } from "react-icons/fa";
 import { RxSlash } from "react-icons/rx";
 import { MdDelete } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
-import { scheduleData } from "../../global-data/booking";
+import { scheduleData } from "../../../global-data/booking";
 import moment from "moment";
 
 function BookingHistory() {

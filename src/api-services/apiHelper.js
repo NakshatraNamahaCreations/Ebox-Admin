@@ -19,4 +19,17 @@ const get = async (endpoint, params = {}) => {
   }
 };
 
-export { get };
+async function postData(url, data) {
+  try {
+    const response = await axios.post(apiUrl.LOCALURL + url, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export { get, postData };

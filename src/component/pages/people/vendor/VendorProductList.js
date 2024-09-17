@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 // import { bannerData } from "../../../global-data/booking";
 import { FaEye } from "react-icons/fa";
-import { apiUrl } from "../../../api-services/apiContents";
-import { useLocation } from "react-router-dom";
-import { get } from "../../../api-services/apiHelper";
-import Loader from "../../loader/Loader";
+import { apiUrl } from "../../../../api-services/apiContents";
+import { useLocation, useNavigate } from "react-router-dom";
+import { get } from "../../../../api-services/apiHelper";
+import Loader from "../../../loader/Loader";
 
-function VendorProductList() {
-  const location = useLocation();
-  const vendorID = location.state.vendorId;
-  const vendorName = location.state.vendorName;
+function VendorProductList({ vendorID }) {
+  // const location = useLocation();
+  // const vendorID = location.state.vendorId;
+  // const vendorName = location.state.vendorName;
   // console.log("vendor if", vendorID);
-
+  const Navigate = useNavigate();
   const [vendorProduct, setVendorProduct] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -33,22 +33,25 @@ function VendorProductList() {
 
     fetchVendors();
   }, []);
-  // console.log("vendorProduct in vendor product poage", vendorProduct);
+  // console.log("vendorProduct in vendor  product poage", vendorProduct);
+
+  const navigateToDetailedPage = (row) => {
+    Navigate("/vendor/product", {
+      state: {
+        prooduct: row,
+      },
+    });
+  };
 
   const columns = [
-    {
-      name: "Product ID",
-      selector: (row) => `#${row._id?.slice(-3)}`,
-      sortable: true,
-    },
+    // {
+    //   name: "Product ID",
+    //   selector: (row) => `#${row._id?.slice(-3)}`,
+    //   sortable: true,
+    // },
     {
       name: "Product Name",
       selector: (row) => row.product_name,
-      sortable: true,
-    },
-    {
-      name: "Brand Name",
-      selector: (row) => row.brand,
       sortable: true,
     },
     {
@@ -57,7 +60,7 @@ function VendorProductList() {
         const imageUrl =
           row.product_image && row.product_image.length > 0
             ? `${apiUrl.IMAGEURL}${row.product_image[0]}`
-            : "placeholder.jpg"; // You can replace this with a proper placeholder image path
+            : "placeholder.jpg";
 
         return (
           <div style={{ padding: "5px" }}>
@@ -65,16 +68,11 @@ function VendorProductList() {
           </div>
         );
       },
-      sortable: false, // Consider whether sorting should be enabled based on your use case
+      sortable: false,
     },
     {
       name: "Price",
-      selector: (row) => row.product_price,
-      sortable: true,
-    },
-    {
-      name: "MRP Price",
-      selector: (row) => row.mrp_rate,
+      selector: (row) => "₹" + row.product_price,
       sortable: true,
     },
     {
@@ -86,7 +84,6 @@ function VendorProductList() {
               style={{
                 display: "flex",
               }}
-              // onClick={() => navigateToDetailedPage(row)}
             >
               <div
                 style={{
@@ -114,7 +111,7 @@ function VendorProductList() {
             style={{
               display: "flex",
             }}
-            // onClick={() => navigateToDetailedPage(row)}
+            onClick={() => navigateToDetailedPage(row)}
           >
             <div style={{ cursor: "pointer" }} title="View">
               <FaEye size={16} color="#E91E63" /> View
@@ -125,37 +122,18 @@ function VendorProductList() {
     },
   ];
   return (
-    <div className="mt-3">
-      <div
-        className="border-top-for-all-border"
-        style={{
-          backgroundColor: "white",
-          borderRadius: "5px",
-        }}
-      >
-        <div className="p-2">
-          <h3 style={styles.itemsHead}>
-            Currently you are viewing vendor "{vendorName}"{" "}
-          </h3>
-          {/* <div
-            style={{
-              borderBottom: "1px solid #f4f4f4",
-            }}
-          ></div> */}
-          <div>
-            {isLoading && <Loader />}
-            <br />
-            {!isLoading && (
-              <DataTable
-                columns={columns}
-                data={vendorProduct}
-                pagination
-                //   defaultSortFieldId={1}
-              />
-            )}
-          </div>
+    <div>
+      {isLoading && <Loader />}
+      {!isLoading && (
+        <div style={{ border: "1px solid #0000001f" }}>
+          <DataTable
+            columns={columns}
+            data={vendorProduct}
+            pagination
+            //   defaultSortFieldId={1}
+          />
         </div>
-      </div>
+      )}
     </div>
   );
 }

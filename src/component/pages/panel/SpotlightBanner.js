@@ -1,11 +1,72 @@
 import React from "react";
 import DataTable from "react-data-table-component";
-import { FaEye } from "react-icons/fa";
-import { RxSlash } from "react-icons/rx";
+// import { FaEye } from "react-icons/fa";
+// import { RxSlash } from "react-icons/rx";
 import { MdDelete } from "react-icons/md";
-import { bannerData } from "../../global-data/booking";
+import { bannerData } from "../../../global-data/booking";
 
 function SpotlightBanner() {
+  // Example Data
+  const products = [
+    { id: 1, name: "Product A", totalQuantity: 100 },
+    { id: 2, name: "Product B", totalQuantity: 50 },
+    // More products...
+  ];
+
+  const orders = [
+    { id: 1, productId: 1, orderDate: "2024-09-04", appliedQuantity: 20 },
+    { id: 2, productId: 1, orderDate: "2024-09-05", appliedQuantity: 100 },
+    { id: 3, productId: 2, orderDate: "2024-09-04", appliedQuantity: 10 },
+    // More orders...
+  ];
+
+  // Function to calculate available quantity for a product on a given date
+  function calculateAvailableQuantity(product, orders, selectedDate) {
+    // Filter orders by selected date and product ID
+    const ordersForDate = orders.filter(
+      (order) =>
+        order.orderDate === selectedDate && order.productId === product.id
+    );
+
+    // Sum applied quantities for the selected date
+    const totalAppliedQuantity = ordersForDate.reduce(
+      (sum, order) => sum + order.appliedQuantity,
+      0
+    );
+
+    // Calculate available quantity
+    return product.totalQuantity - totalAppliedQuantity;
+  }
+
+  // Function to get available products for a selected date
+  function getAvailableProducts(products, orders, selectedDate) {
+    return products
+      .map((product) => {
+        const availableQuantity = calculateAvailableQuantity(
+          product,
+          orders,
+          selectedDate
+        );
+
+        return {
+          ...product,
+          availableQuantity,
+          isAvailable: availableQuantity > 0,
+        };
+      })
+      .filter((product) => product.isAvailable);
+  }
+
+  // Example Usage
+  const selectedDate = "2024-09-05";
+  const availableProducts = getAvailableProducts(
+    products,
+    orders,
+    selectedDate
+  );
+
+  console.log("Available Products:", availableProducts);
+
   const columns = [
     {
       name: "Sl.No",
