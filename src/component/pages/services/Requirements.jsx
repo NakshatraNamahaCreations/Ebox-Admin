@@ -14,7 +14,7 @@ function Requirements() {
     setIsLoading(true);
     try {
       const serviceRes = await axios.get(
-        `${apiUrl.LOCALURL}${apiUrl.GET_ALL_SERVICE}`
+        `${apiUrl.BASEURL}${apiUrl.GET_ALL_SERVICE}`
       );
       if (serviceRes.status === 200) {
         setServiceListData(serviceRes.data.data);

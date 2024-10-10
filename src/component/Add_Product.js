@@ -5,6 +5,7 @@ import {
   categoryLightings,
   categoryVideo,
   categoryGenSet,
+  categoryFabrication,
 } from "../global-data/global-data";
 import axios from "axios";
 import { apiUrl } from "../api-services/apiContents";
@@ -67,6 +68,10 @@ function Add_Product() {
   };
   console.log("galleryImages", galleryImages);
 
+  const calculateDiscount =
+    mrpRate && productPrice ? ((mrpRate - productPrice) / mrpRate) * 100 : 0;
+  const discountValue = Math.round(calculateDiscount);
+
   const addProduct = async () => {
     // Basic validation to check if all required fields are filled
     if (
@@ -92,12 +97,12 @@ function Add_Product() {
     try {
       // Prepare form data
       const formData = new FormData();
-      formData.append("vendor_id", "66d00be20c792cf443a42280");
-      formData.append("vendor_name", "Suman Raj");
-      formData.append("product_type", "sell");
+      formData.append("vendor_id", "67062b13e0297d4e91ab5019");
+      formData.append("vendor_name", "Balaji");
+      formData.append("product_type", "rental");
       formData.append("product_name", productName);
       formData.append("product_price", productPrice);
-      formData.append("discount", productDiscount);
+      formData.append("discount", discountValue);
       formData.append("mrp_rate", mrpRate);
       formData.append("product_category", selectedCategory);
       formData.append("brand", productBrand);
@@ -107,9 +112,9 @@ function Add_Product() {
       formData.append("product_dimension", productDimension);
       formData.append("product_weight", productWeight);
       formData.append("country_of_orgin", countryOfOrigin);
-      formData.append("manufacture_name", manufactureName);
+      formData.append("manufacturer_name", manufactureName);
       formData.append("product_color", color);
-      formData.append("shop_name", "Mani Traders");
+      formData.append("shop_name", "Balaji Electricals & Electronics");
 
       formData.append(
         "Specifications",
@@ -231,6 +236,7 @@ function Add_Product() {
         className="mb-1"
         type="number"
         placeholder="Price"
+        min={1}
         value={productPrice}
         onChange={(e) => setProductPrice(e.target.value)}
       />{" "}
@@ -239,15 +245,16 @@ function Add_Product() {
         type="number"
         placeholder="MRP Rate"
         value={mrpRate}
+        min={1}
         onChange={(e) => setMrpRate(e.target.value)}
       />{" "}
       <input
         className="mb-1"
-        type="number"
         placeholder="Discount"
-        value={productDiscount}
+        value={productPrice && mrpRate ? discountValue : 0}
+        disabled
         onChange={(e) => setProductDiscount(e.target.value)}
-      />{" "}
+      />
       <input
         className="mb-1"
         type="text"
@@ -445,6 +452,43 @@ function Add_Product() {
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {categoryGenSet.map((item) => (
+                      <Dropdown.Item
+                        key={item.value}
+                        onClick={() =>
+                          handleSelectItemChange(index, item.label)
+                        }
+                      >
+                        {item.label}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+              <div style={{ flex: 0.6, marginLeft: "2px" }}>
+                <input
+                  type="text"
+                  placeholder="e.g. Power output in kW"
+                  value={ele.ItemSpecification}
+                  onChange={(e) =>
+                    handleSpecificationChange(index, e.target.value)
+                  }
+                  style={{ width: "100%" }}
+                />
+              </div>
+            </div>
+          ))}
+        </>
+      ) : selectedCategory === "Fabrication" ? (
+        <>
+          {addItems.map((ele, index) => (
+            <div key={index} style={{ display: "flex", marginBottom: "10px" }}>
+              <div style={{ flex: 0.6, marginRight: "2px" }}>
+                <Dropdown>
+                  <Dropdown.Toggle variant="success" id="dropdown-basic">
+                    {ele.selectItem || "Select a feature"}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {categoryFabrication.map((item) => (
                       <Dropdown.Item
                         key={item.value}
                         onClick={() =>

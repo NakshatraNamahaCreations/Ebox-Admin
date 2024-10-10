@@ -21,7 +21,7 @@ const get = async (endpoint, params = {}) => {
 
 async function postData(url, data) {
   try {
-    const response = await axios.post(apiUrl.LOCALURL + url, data, {
+    const response = await axios.post(apiUrl.BASEURL + url, data, {
       headers: {
         "Content-Type": "application/json",
       },

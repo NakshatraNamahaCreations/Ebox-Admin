@@ -11,6 +11,7 @@ import * as XLSX from "xlsx";
 
 function AddService() {
   const [serviceName, setServiceName] = useState("");
+  const [serviceImage, setServiceImage] = useState("");
   const [serviceListData, setServiceListData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [file, setFile] = useState(null);
@@ -76,9 +77,7 @@ function AddService() {
   const fetchList = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.get(
-        `${apiUrl.LOCALURL}${apiUrl.GET_ALL_SERVICE}`
-      );
+      const res = await axios.get(`${apiUrl.BASEURL}${apiUrl.GET_ALL_SERVICE}`);
       if (res.status === 200) {
         // console.log("res", res);
 
@@ -118,7 +117,7 @@ function AddService() {
   const deleteService = async (id) => {
     try {
       const res = await axios.delete(
-        `${apiUrl.LOCALURL}${apiUrl.DELETE_SERVICE}/${id}`
+        `${apiUrl.BASEURL}${apiUrl.DELETE_SERVICE}/${id}`
       );
       if (res.status === 200) {
         // alert("Service Deleted");
@@ -164,7 +163,7 @@ function AddService() {
 
           try {
             axios.post(
-              `${apiUrl.LOCALURL}${apiUrl.ADD_SERVICE_VIA_EXCEL}`,
+              `${apiUrl.BASEURL}${apiUrl.ADD_SERVICE_VIA_EXCEL}`,
               jsonData1
             );
             alert("Service Added!!!");
@@ -247,6 +246,19 @@ function AddService() {
                   value={serviceName}
                   placeholder="e.g. Catering Service"
                   onChange={(e) => setServiceName(e.target.value)}
+                  style={{ fontSize: "14px", padding: "4px 7px" }}
+                />
+              </div>
+              <div>
+                <h6 className="mt-3" style={styles.header}>
+                  Service Image:
+                </h6>
+
+                <input
+                  type="file"
+                  accept="image/png"
+                  placeholder="e.g. Catering Service"
+                  onChange={(e) => setServiceImage(e.target.files[0])}
                   style={{ fontSize: "14px", padding: "4px 7px" }}
                 />
               </div>

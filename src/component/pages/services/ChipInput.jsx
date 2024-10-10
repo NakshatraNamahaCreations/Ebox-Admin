@@ -59,7 +59,7 @@ function ChipInput({ serviceId }) {
           requirement_fields: chips,
         };
         const res = await axios.put(
-          `${apiUrl.LOCALURL}${apiUrl.ADD_REQUIREMENTS}/${serviceId}`,
+          `${apiUrl.BASEURL}${apiUrl.ADD_REQUIREMENTS}/${serviceId}`,
           data
         );
         if (res.status === 200) {
@@ -94,7 +94,8 @@ function ChipInput({ serviceId }) {
         >
           <option value="">---Select type---</option>
           <option value="Text">Text </option>
-          <option value="File"> File</option>
+          <option value="Date"> Date</option>
+          <option value="Timing"> Time</option>
         </select>
 
         <button className="col-md-3 ms-3" onClick={handleAddChip}>

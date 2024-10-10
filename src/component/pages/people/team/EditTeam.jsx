@@ -28,7 +28,7 @@ function EditTeam() {
       setIsLoading(true);
       try {
         const res = await axios.get(
-          `${apiUrl.LOCALURL}${apiUrl.GET_USER}/${user}`
+          `${apiUrl.BASEURL}${apiUrl.GET_USER}/${user}`
         );
         if (res.status === 200) {
           //   console.log(res);
@@ -73,7 +73,7 @@ function EditTeam() {
         user_management: userManagement,
       };
       const res = await axios.put(
-        `${apiUrl.LOCALURL}${apiUrl.UPDATE_USER}/${member._id}`,
+        `${apiUrl.BASEURL}${apiUrl.UPDATE_USER}/${member._id}`,
         data
       );
       if (res.status === 200) {

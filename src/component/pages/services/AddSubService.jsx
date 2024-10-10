@@ -22,13 +22,13 @@ function AddSubService() {
     setIsLoading(true);
     try {
       const serviceRes = await axios.get(
-        `${apiUrl.LOCALURL}${apiUrl.GET_ALL_SERVICE}`
+        `${apiUrl.BASEURL}${apiUrl.GET_ALL_SERVICE}`
       );
       if (serviceRes.status === 200) {
         setServiceListData(serviceRes.data.data);
       }
       const subServiceRes = await axios.get(
-        `${apiUrl.LOCALURL}${apiUrl.GET_ALL_SUB_SERVICE}`
+        `${apiUrl.BASEURL}${apiUrl.GET_ALL_SUB_SERVICE}`
       );
       if (serviceRes.status === 200) {
         setSubServiceListData(subServiceRes.data.data);
@@ -47,7 +47,6 @@ function AddSubService() {
   const handleService = (e) => {
     let data = e.target.value;
     let serviceList = serviceListData.find((ele) => ele._id === data);
-    // console.log("serviceList", serviceList);
     setServiceName(serviceList.service_name);
     setServiceId(serviceList._id);
   };
@@ -65,8 +64,9 @@ function AddSubService() {
         const res = await postData(`${apiUrl.ADD_SUB_SERVICE}`, data);
         if (res) {
           alert("Added");
-          // console.log("res", res);
+          // window.location.reload(); //add later
           setServiceName("");
+          setServiceId("");
           setServiceSubCategory("");
           fetchList();
         }
@@ -78,7 +78,7 @@ function AddSubService() {
   const deleteService = async (id) => {
     try {
       const res = await axios.delete(
-        `${apiUrl.LOCALURL}${apiUrl.DELETE_SUB_SERVICE}/${id}`
+        `${apiUrl.BASEURL}${apiUrl.DELETE_SUB_SERVICE}/${id}`
       );
       if (res.status === 200) {
         // alert("Service Deleted");
@@ -124,7 +124,7 @@ function AddSubService() {
 
   //         try {
   //           axios.post(
-  //             `${apiUrl.LOCALURL}${apiUrl.ADD_SERVICE_VIA_EXCEL}`,
+  //             `${apiUrl.BASEURL}${apiUrl.ADD_SERVICE_VIA_EXCEL}`,
   //             jsonData1
   //           );
   //           alert("Service Added!!!");
@@ -209,7 +209,6 @@ function AddSubService() {
 
                 <select
                   style={{ padding: "4px 7px", fontSize: "14px" }}
-                  // value={serviceName}
                   onChange={handleService}
                 >
                   <option value="">---Select Service---</option>

@@ -75,4 +75,22 @@ const categoryGenSet = [
   { label: "Colour", value: "16" },
 ];
 
-export { categorySound, categoryLightings, categoryVideo, categoryGenSet };
+const categoryFabrication = [
+  { label: "Item Thickness", value: "1" },
+  { label: "Pattern", value: "2" },
+  { label: "Occasion", value: "3" },
+  { label: "Primary material", value: "4" },
+  { label: "Shape", value: "5" },
+  { label: "Special Feature", value: "6" },
+  { label: "Fabric Type", value: "7" },
+  { label: "Pattern", value: "8" },
+  { label: "Included Components", value: "9" },
+  { label: "Indoor/Outdoor Usage", value: "10" },
+];
+export {
+  categorySound,
+  categoryLightings,
+  categoryVideo,
+  categoryGenSet,
+  categoryFabrication,
+};

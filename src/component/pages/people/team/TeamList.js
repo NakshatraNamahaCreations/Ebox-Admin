@@ -26,9 +26,7 @@ function TeamList() {
   const fetchTeams = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.get(
-        "http://localhost:9000/api/team/get-all-member"
-      );
+      const res = await axios.get(`${apiUrl.BASEURL}${apiUrl.GET_ALL_TEAM}`);
       if (res.status === 200) {
         // console.log("res", res);
 
@@ -54,7 +52,7 @@ function TeamList() {
   const blockUser = async (id) => {
     try {
       const res = await axios.put(
-        `${apiUrl.LOCALURL}${apiUrl.BLOCK_USER}/${id}`
+        `${apiUrl.BASEURL}${apiUrl.BLOCK_USER}/${id}`
       );
       if (res.status === 200) {
         console.log("user blocked");
@@ -74,7 +72,7 @@ function TeamList() {
   const unblockUser = async (id) => {
     try {
       const res = await axios.put(
-        `${apiUrl.LOCALURL}${apiUrl.UNBLOCK_USER}/${id}`
+        `${apiUrl.BASEURL}${apiUrl.UNBLOCK_USER}/${id}`
       );
       if (res.status === 200) {
         console.log("user unblocked");

@@ -1,9 +1,8 @@
 const apiUrl = {
-  BASEURL: "https://eventbox.nakshatranamahacreations.in/api",
-  IMAGEURL: "https://eventbox.nakshatranamahacreations.in/",
-  LOCALURL: "http://localhost:9000/api",
-  // eventbox.nakshatranamahacreations.in
-  // http://localhost:9000
+  BASEURL: "http://54.153.132.86:9000/api",
+  IMAGEURL: "http://54.153.132.86:9000/",
+  // IMAGEURL: "http://localhost:9000/",
+  // LOCALURL: "https://eventbox.nakshatranamahacreations.in/api",
 
   //PRODUCT
   ADD_PRODUCT: "/product/addproduct",
