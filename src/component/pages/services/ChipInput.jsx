@@ -21,7 +21,7 @@ function ChipInput({ serviceId }) {
   // Handle adding chip with button
   function handleAddChip() {
     // Validate fields
-    if (!text || !type) {
+    if (!text) {
       setValidationError("Please enter text and select a type.");
       return;
     }
@@ -86,7 +86,7 @@ function ChipInput({ serviceId }) {
           onChange={(e) => setText(e.target.value)}
           //   onKeyPress={handlePressEnter} //working
         />
-        <select
+        {/* <select
           className="col-md-4 ms-3"
           style={{ fontSize: "14px" }}
           value={type}
@@ -96,7 +96,7 @@ function ChipInput({ serviceId }) {
           <option value="Text">Text </option>
           <option value="Date"> Date</option>
           <option value="Timing"> Time</option>
-        </select>
+        </select> */}
 
         <button className="col-md-3 ms-3" onClick={handleAddChip}>
           Add
