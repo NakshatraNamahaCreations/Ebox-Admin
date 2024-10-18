@@ -1,6 +1,6 @@
 const apiUrl = {
   // BASEURL: "http://192.168.1.103:9000/api",
-  IMAGEURL: "http://192.168.1.103:9000/",
+  IMAGEURL: "http://54.153.132.86:9000/",
   BASEURL: "http://54.153.132.86:9000/",
   // IMAGEURL: "http://localhost:9000/",
   // LOCALURL: "https://eventbox.nakshatranamahacreations.in/api",
