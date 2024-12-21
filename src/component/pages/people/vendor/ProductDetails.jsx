@@ -3,12 +3,45 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { apiUrl } from "../../../../api-services/apiContents";
 import ReactPlayer from "react-player";
+import axios from "axios";
 
 function ProductDetails() {
   const location = useLocation();
-  const product = location.state.prooduct;
+  const product = location.state?.prooduct || null;
   const navigate = useNavigate();
   console.log("prooduct", product);
+
+  const makeProductApproval = async () => {
+    try {
+      const res = await axios.put(
+        `${apiUrl.BASEURL}${apiUrl.PRODUCT_APPROVE}${product?._id}`
+      );
+      if (res.status === 200) {
+        console.log(res.data);
+        alert("Approved Successfully");
+        navigate(-1);
+        // window.location.assign("/vendor/vendor-profile");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const makeProductDisapproval = async () => {
+    try {
+      const res = await axios.put(
+        `${apiUrl.BASEURL}${apiUrl.PRODUCT_DISAPPROVE}${product?._id}`
+      );
+      if (res.status === 200) {
+        console.log(res.data);
+        alert("disapproved Successfully");
+        navigate(-1);
+        // window.location.assign("/vendor/vendor-profile");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   return (
     <div
@@ -41,13 +74,13 @@ function ProductDetails() {
           <div
             style={{ fontSize: "14px", color: "#636870", fontWeight: "500" }}
           >
-            Back to vendor
+            {/* Back to vendor */}
           </div>
           <div
             className="pb-3"
             style={{ color: "black", fontSize: "23px", fontWeight: "bold" }}
           >
-            {product.product_name}
+            {product?.product_name}
           </div>
         </div>
       </div>
@@ -62,19 +95,19 @@ function ProductDetails() {
             <div>
               <div style={Styles.labelTitleSmall}>Product Name:</div>
               <div className="px-3 py-2" style={Styles.details}>
-                {product.product_name}{" "}
+                {product?.product_name}{" "}
               </div>
             </div>
             <div>
               <div style={Styles.labelTitleSmall}>Product Type:</div>
               <div className="px-3 py-2" style={Styles.details}>
-                {product.product_type}{" "}
+                {product?.product_type}{" "}
               </div>
             </div>
             <div>
               <div style={Styles.labelTitleSmall}>Product Category:</div>
               <div className="px-3 py-2" style={Styles.details}>
-                {product.product_category}{" "}
+                {product?.product_category}{" "}
               </div>
             </div>
           </div>
@@ -89,31 +122,31 @@ function ProductDetails() {
               <div className="col-md-6">
                 <div style={Styles.labelTitleSmall}>Model Name:</div>
                 <div className="px-3 py-2" style={Styles.details}>
-                  {product.model_name}{" "}
+                  {product?.model_name}{" "}
                 </div>
               </div>
               <div className="col-md-6">
                 <div style={Styles.labelTitleSmall}>Brand:</div>
                 <div className="px-3 py-2" style={Styles.details}>
-                  {product.brand}{" "}
+                  {product?.brand}{" "}
                 </div>
               </div>
               <div className="col-md-6">
                 <div style={Styles.labelTitleSmall}>Material Type:</div>
                 <div className="px-3 py-2" style={Styles.details}>
-                  {product.material_type}{" "}
+                  {product?.material_type}{" "}
                 </div>
               </div>
               <div className="col-md-6">
                 <div style={Styles.labelTitleSmall}>Product Color:</div>
                 <div className="px-3 py-2" style={Styles.details}>
-                  {product.product_color ? product.product_color : "NA"}{" "}
+                  {product?.product_color ? product?.product_color : "NA"}{" "}
                 </div>
               </div>
               <div className="col-md-6">
                 <div style={Styles.labelTitleSmall}>Warrenty Type:</div>
                 <div className="px-3 py-2" style={Styles.details}>
-                  {product.warranty ? product.warranty : "NA"}{" "}
+                  {product?.warranty ? product?.warranty : "NA"}{" "}
                 </div>
               </div>
             </div>
@@ -128,13 +161,13 @@ function ProductDetails() {
             <div>
               <div style={Styles.labelTitleSmall}>Manufacuturer:</div>
               <div className="px-3 py-2" style={Styles.details}>
-                {product.manufacturer_name ? product.manufacturer_name : "NA"}{" "}
+                {product?.manufacturer_name ? product?.manufacturer_name : "NA"}{" "}
               </div>
             </div>
             <div>
               <div style={Styles.labelTitleSmall}>Country of Orgin:</div>
               <div className="px-3 py-2" style={Styles.details}>
-                {product.country_of_orgin ? product.country_of_orgin : "NA"}{" "}
+                {product?.country_of_orgin ? product?.country_of_orgin : "NA"}{" "}
               </div>
             </div>
           </div>
@@ -145,7 +178,7 @@ function ProductDetails() {
             className="py-2 px-3 mt-1"
             style={{ border: "1px solid #e4e4e4", borderRadius: "7px" }}
           >
-            {product.Specifications.map((ele, index) => (
+            {product?.Specifications.map((ele, index) => (
               <div key={index}>
                 <div style={Styles.labelTitleSmall}>{ele.name} </div>
                 <div className="px-3 py-2" style={Styles.details}>
@@ -162,8 +195,8 @@ function ProductDetails() {
             style={{ border: "1px solid #e4e4e4", borderRadius: "7px" }}
           >
             <div className="row">
-              {product.product_image &&
-                product.product_image.map((image, index) => (
+              {product?.product_image &&
+                product?.product_image.map((image, index) => (
                   <div key={index} className="col-md-4 mb-2">
                     <img
                       src={`${apiUrl.IMAGEURL}${image}`}
@@ -180,7 +213,7 @@ function ProductDetails() {
             style={{ border: "1px solid #e4e4e4", borderRadius: "7px" }}
           >
             <ReactPlayer
-              url={`${apiUrl.IMAGEURL}${product.product_video}`}
+              url={`${apiUrl.IMAGEURL}${product?.product_video}`}
               width={460}
               height={223}
               controls={true}
@@ -197,13 +230,13 @@ function ProductDetails() {
               <div className="col-md-6">
                 <div style={Styles.labelTitleSmall}>Item Weight:</div>
                 <div className="px-3 py-2" style={Styles.details}>
-                  {product.product_weight}{" "}
+                  {product?.product_weight}{" "}
                 </div>
               </div>
               <div className="col-md-6">
                 <div style={Styles.labelTitleSmall}>Dimension:</div>
                 <div className="px-3 py-2" style={Styles.details}>
-                  {product.product_dimension}{" "}
+                  {product?.product_dimension}{" "}
                 </div>
               </div>
             </div>
@@ -219,25 +252,25 @@ function ProductDetails() {
               <div className="col-md-6">
                 <div style={Styles.labelTitleSmall}>Price:</div>
                 <div className="px-3 py-2" style={Styles.details}>
-                  ₹ {product.product_price}{" "}
+                  ₹ {product?.product_price}{" "}
                 </div>
               </div>
               <div className="col-md-6">
                 <div style={Styles.labelTitleSmall}>MRP Rate:</div>
                 <div className="px-3 py-2" style={Styles.details}>
-                  ₹ {product.mrp_rate}{" "}
+                  ₹ {product?.mrp_rate}{" "}
                 </div>
               </div>
               <div className="col-md-6">
                 <div style={Styles.labelTitleSmall}>Discount</div>
                 <div className="px-3 py-2" style={Styles.details}>
-                  {product.discount}%{" "}
+                  {product?.discount}%{" "}
                 </div>
               </div>
               <div className="col-md-6">
                 <div style={Styles.labelTitleSmall}>Warranty</div>
                 <div className="px-3 py-2" style={Styles.details}>
-                  {product.warranty ? product.warranty : "NA"}{" "}
+                  {product?.warranty ? product.warranty : "NA"}{" "}
                 </div>
               </div>
             </div>
@@ -250,19 +283,38 @@ function ProductDetails() {
           justifyContent: "center",
         }}
       >
-        <button
-          style={{
-            backgroundColor: "#90e447",
-            border: "#7ac536",
-            color: "white",
-            borderRadius: "3px",
-            fontSize: "17px",
-            fontWeight: "500",
-            padding: "5px 10px",
-          }}
-        >
-          Approve Product
-        </button>
+        {product?.approval_status === true && (
+          <button
+            style={{
+              backgroundColor: "#0d6efd",
+              border: 0,
+              color: "white",
+              borderRadius: "3px",
+              fontSize: "17px",
+              fontWeight: "500",
+              padding: "5px 10px",
+            }}
+            onClick={makeProductDisapproval}
+          >
+            Disapprove
+          </button>
+        )}
+        {product?.approval_status === false && (
+          <button
+            style={{
+              backgroundColor: "#0d6efd",
+              border: 0,
+              color: "white",
+              borderRadius: "3px",
+              fontSize: "17px",
+              fontWeight: "500",
+              padding: "5px 10px",
+            }}
+            onClick={makeProductApproval}
+          >
+            Approve
+          </button>
+        )}
       </div>
     </div>
   );

@@ -80,7 +80,7 @@ function ChipInput({ serviceId }) {
           className="col-md-4"
           type="text"
           id="tags"
-          placeholder="Press Enter to add tag"
+          placeholder="Add your requirements"
           value={text}
           style={styles.inputContainer}
           onChange={(e) => setText(e.target.value)}

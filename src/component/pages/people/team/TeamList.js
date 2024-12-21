@@ -96,6 +96,24 @@ function TeamList() {
       },
     });
   };
+
+  const deleteBanners = async (ele) => {
+    try {
+      const res = await axios.delete(
+        `${apiUrl.BASEURL}${apiUrl.DELETE_TEAM_USER}${ele._id}`
+      );
+      if (res.status === 200) {
+        console.log("deletevres", res);
+
+        alert(res.data.success || "User Deleted");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert(Error, "Something went wrong! Try again");
+    }
+  };
+
   const columns = [
     {
       name: "Name",
@@ -115,57 +133,113 @@ function TeamList() {
     {
       name: "Permissions",
       selector: (row) => (
-        <div style={styles.root01698}>
-          <div style={styles.iconCont0199}>
-            <RiDashboardFill
-              size={20}
-              color={row.dashboard ? "#34a32d" : "#E0E0E0"}
-              title="Dashboard"
-            />
-          </div>
-          <div style={styles.iconCont0199}>
-            <MdImage
-              size={20}
-              color={row.banner ? "#34a32d" : "#E0E0E0"}
-              title="Banner"
-            />
-          </div>
-          <div style={styles.iconCont0199}>
-            <FaRegCalendarCheck
-              size={17}
-              color={row.booking_management ? "#34a32d" : "#E0E0E0"}
-              title="Bookings"
-            />
-          </div>
+        // <div style={styles.root01698}>
+        //   <div style={styles.iconCont0199}>
+        //     <RiDashboardFill
+        //       size={20}
+        //       color={row.dashboard ? "#34a32d" : "#E0E0E0"}
+        //       title="Dashboard"
+        //     />
+        //   </div>
+        //   <div style={styles.iconCont0199}>
+        //     <MdImage
+        //       size={20}
+        //       color={row.banner ? "#34a32d" : "#E0E0E0"}
+        //       title="Banner"
+        //     />
+        //   </div>
+        //   <div style={styles.iconCont0199}>
+        //     <FaRegCalendarCheck
+        //       size={17}
+        //       color={row.booking_management ? "#34a32d" : "#E0E0E0"}
+        //       title="Bookings"
+        //     />
+        //   </div>
 
-          <div style={styles.iconCont0199}>
-            <FaUser
-              size={17}
-              color={row.user_management ? "#34a32d" : "#E0E0E0"}
-              title="User"
-            />
+        //   <div style={styles.iconCont0199}>
+        //     <FaUser
+        //       size={17}
+        //       color={row.user_management ? "#34a32d" : "#E0E0E0"}
+        //       title="User"
+        //     />
+        //   </div>
+        //   <div style={styles.iconCont0199}>
+        //     <FaUserTie
+        //       size={17}
+        //       color={row.vendor_management ? "#34a32d" : "#E0E0E0"}
+        //       title="Vendor Management"
+        //     />
+        //   </div>
+        //   <div style={styles.iconCont0199}>
+        //     <BsFillPeopleFill
+        //       size={20}
+        //       color={row.team_management ? "#34a32d" : "#E0E0E0"}
+        //       title="Team Management"
+        //     />
+        //   </div>
+        //   {/* <div style={styles.iconCont0199}>
+        //     <PiPathDuotone
+        //       size={20}
+        //       color={row.selfService ? "#34a32d" : "#E0E0E0"}
+        //       title="Self Service"
+        //     />
+        //   </div> */}
+        // </div>
+        <div>
+          <div
+            style={{ color: row.dashboard_management ? "black" : "#E0E0E0" }}
+          >
+            Dashboard
           </div>
-          <div style={styles.iconCont0199}>
-            <FaUserTie
-              size={17}
-              color={row.vendor_management ? "#34a32d" : "#E0E0E0"}
-              title="Vendor Management"
-            />
+          <div style={{ color: row.banner_management ? "black" : "#E0E0E0" }}>
+            Banner
           </div>
-          <div style={styles.iconCont0199}>
-            <BsFillPeopleFill
-              size={20}
-              color={row.team_management ? "#34a32d" : "#E0E0E0"}
-              title="Team Management"
-            />
+          <div style={{ color: row.service_management ? "black" : "#E0E0E0" }}>
+            Service
           </div>
-          {/* <div style={styles.iconCont0199}>
-            <PiPathDuotone
-              size={20}
-              color={row.selfService ? "#34a32d" : "#E0E0E0"}
-              title="Self Service"
-            />
-          </div> */}
+          <div
+            style={{ color: row.subservice_management ? "black" : "#E0E0E0" }}
+          >
+            Sub Service
+          </div>
+          <div
+            style={{
+              color: row.requirement_management ? "black" : "#E0E0E0",
+            }}
+          >
+            Requirements
+          </div>
+          <div
+            style={{
+              color: row.userbooking_management ? "black" : "#E0E0E0",
+            }}
+          >
+            User Bookings
+          </div>
+          <div
+            style={{
+              color: row.vendororder_management ? "black" : "#E0E0E0",
+            }}
+          >
+            Vendor Orders
+          </div>
+          <div style={{ color: row.manage_user ? "black" : "#E0E0E0" }}>
+            User's
+          </div>
+          <div style={{ color: row.manage_vendor ? "black" : "#E0E0E0" }}>
+            Vendor's
+          </div>
+          <div style={{ color: row.manage_teammemebrs ? "black" : "#E0E0E0" }}>
+            Team's
+          </div>
+          <div
+            style={{ color: row.manage_rentalproducts ? "black" : "#E0E0E0" }}
+          >
+            Rental
+          </div>
+          <div style={{ color: row.manage_sellproducts ? "black" : "#E0E0E0" }}>
+            Sell
+          </div>
         </div>
       ),
       sortable: true,
@@ -174,43 +248,103 @@ function TeamList() {
       name: "Action",
       selector: (row) => (
         <>
-          <div
+          <div style={{ display: "flex" }}>
+            <div
+              style={{
+                backgroundColor: "#ffa534",
+                padding: "7px 13px",
+                cursor: "pointer",
+              }}
+              onClick={() => editTeam(row._id)}
+              title="Edit"
+            >
+              <MdEdit size={16} color="white" />
+            </div>
+            {row.isBlocked === true ? (
+              <div
+                style={{
+                  backgroundColor: "#35cd3a",
+                  padding: "7px 13px",
+                  cursor: "pointer",
+                }}
+                title="Unblock"
+                onClick={() => unblockUser(row._id)}
+              >
+                <CgUnblock size={16} color="white" />
+              </div>
+            ) : (
+              <div
+                title="Block"
+                style={{
+                  backgroundColor: "#2f4e9e",
+                  padding: "7px 13px",
+                  cursor: "pointer",
+                }}
+                onClick={() => blockUser(row._id)}
+              >
+                <MdBlock size={16} color="white" />
+              </div>
+            )}
+            <div
+              style={{
+                backgroundColor: "#E91E63",
+                padding: "7px 13px",
+                cursor: "pointer",
+              }}
+              onClick={() => deleteBanners(row)}
+              title="Delete"
+            >
+              <MdDelete size={16} color="white" />
+            </div>
+          </div>
+          {/* <div
             style={{
               display: "flex",
             }}
           >
-            <div style={{ cursor: "pointer" }}>
+            <div
+              style={{
+                cursor: "pointer",
+                backgroundColor: "#e91e63",
+                padding: "7px 13px",
+              }}
+              onClick={() => unblockUser(row._id)}
+            >
               {row.isBlocked === true ? (
                 <>
-                  <CgUnblock
-                    title="Unblock"
-                    size={16}
-                    color="#E91E63"
-                    onClick={() => unblockUser(row._id)}
-                  />{" "}
-                  Unblock
+                  <CgUnblock title="Unblock" size={16} color="#E91E63" />
                 </>
               ) : (
-                <>
+                <div
+                  style={{
+                    cursor: "pointer",
+                    backgroundColor: "#e91e63",
+                    padding: "7px 13px",
+                  }}
+                >
                   <MdBlock
                     title="Block"
                     size={16}
                     color="#E91E63"
                     onClick={() => blockUser(row._id)}
-                  />{" "}
-                  Block
-                </>
+                  />
+                </div>
               )}{" "}
-              / <MdDelete title="Delete" size={16} color="#E91E63" /> Delete /{" "}
+            </div>
+            <MdDelete
+              title="Delete"
+              size={16}
+              color="#E91E63"
+              onClick={() => deleteBanners(row)}
+            />{" "}
+            |{" "}
               <MdEdit
                 title="Edit"
                 size={16}
                 color="#E91E63"
                 onClick={() => editTeam(row._id)}
               />{" "}
-              Edit
-            </div>
-          </div>
+          </div> */}
         </>
       ),
       // sortable: true,
@@ -220,9 +354,27 @@ function TeamList() {
   return (
     <div>
       {isLoading && <Loader />}
-      <br />
       {!isLoading && (
-        <DataTable columns={columns} data={teamMembers} pagination />
+        <>
+          <div style={{ textAlign: "right" }}>
+            <input
+              type="search"
+              // value={serviceName}
+              placeholder="🔍 Search..."
+              // onChange={(e) => setServiceName(e.target.value)}
+              style={{
+                fontSize: "14px",
+                padding: "7px",
+                border: "1px solid #ebedf2",
+                outline: 0,
+                width: "25%",
+                borderRadius: "7px",
+              }}
+            />
+            <br /> <br />
+          </div>
+          <DataTable columns={columns} data={teamMembers} pagination />
+        </>
       )}
     </div>
   );
@@ -267,7 +419,7 @@ const styles = {
     // width: "32px",
     cursor: "pointer",
     // height: "32px",
-    display: "flex",
+    // display: "flex",
     alignItems: "center",
     // borderRadius: "20px",
     justifyContent: "center",

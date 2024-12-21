@@ -35,7 +35,7 @@ function EditTeam() {
       setIsLoading(true);
       try {
         const res = await axios.get(
-          `${apiUrl.BASEURL}${apiUrl.GET_TEAM}/${user}`
+          `${apiUrl.BASEURL}${apiUrl.GET_USER}/${user}`
         );
         if (res.status === 200) {
           //   console.log(res);
@@ -78,18 +78,12 @@ function EditTeam() {
         member_name: name,
         mobile_number: phoneNumber,
         password: password,
-        dashboard_management: dashboard,
-        banner_management: banner,
-        service_management: service,
-        subservice_management: subService,
-        requirement_management: requirements,
-        userbooking_management: userBooking,
-        vendororder_management: vendorOrders,
-        manage_user: manageUser,
-        manage_vendor: manageVendor,
-        manage_teammemebrs: manageTeams,
-        manage_sellproducts: manageSellProducts,
-        manage_rentalproducts: manageRentalProducts,
+        dashboard: dashboard,
+        // banner: banner,
+        booking_management: bookingManagement,
+        vendor_management: vendorManagement,
+        team_management: teamManagement,
+        user_management: userManagement,
       };
       const res = await axios.put(
         `${apiUrl.BASEURL}${apiUrl.UPDATE_USER}/${member._id}`,
@@ -203,7 +197,7 @@ function EditTeam() {
                   <div className="permissionIconTextWrap-0-1-172">
                     <div className="textWrapper-0-1-176">
                       <span>
-                        <div>Service</div>
+                        <div>Booking Management</div>
                       </span>
                     </div>
                   </div>
@@ -213,8 +207,8 @@ function EditTeam() {
                 <div className="ui fitted toggle checkbox undefined ">
                   <input
                     type="checkbox"
-                    checked={service}
-                    onChange={() => setService(!service)}
+                    checked={bookingManagement}
+                    onChange={() => setBookingManagement(!bookingManagement)}
                   />
                 </div>
               </div>
@@ -225,7 +219,7 @@ function EditTeam() {
                   <div className="permissionIconTextWrap-0-1-172">
                     <div className="textWrapper-0-1-176">
                       <span>
-                        <div>Sub Service</div>
+                        <div>User Management</div>
                       </span>
                     </div>
                   </div>
@@ -235,8 +229,8 @@ function EditTeam() {
                 <div className="ui fitted toggle checkbox undefined ">
                   <input
                     type="checkbox"
-                    checked={subService}
-                    onChange={() => setSubService(!subService)}
+                    checked={userManagement}
+                    onChange={() => setUserManagement(!userManagement)}
                   />
                 </div>
               </div>
@@ -247,7 +241,7 @@ function EditTeam() {
                   <div className="permissionIconTextWrap-0-1-172">
                     <div className="textWrapper-0-1-176">
                       <span>
-                        <div>Requirements</div>
+                        <div>Vendor Management</div>
                       </span>
                     </div>
                   </div>
@@ -257,101 +251,12 @@ function EditTeam() {
                 <div className="ui fitted toggle checkbox undefined ">
                   <input
                     type="checkbox"
-                    checked={requirements}
-                    onChange={() => setRequirements(!requirements)}
+                    checked={vendorManagement}
+                    onChange={() => setVendorManagement(!vendorManagement)}
                   />
                 </div>
               </div>
             </div>
-            <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
-              <div className="textSubText-0-1-183">
-                <div className="toggleHeading-0-1-178 undefined">
-                  <div className="permissionIconTextWrap-0-1-172">
-                    <div className="textWrapper-0-1-176">
-                      <span>
-                        <div>User Bookings</div>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="medium-0-1-180">
-                <div className="ui fitted toggle checkbox undefined ">
-                  <input
-                    type="checkbox"
-                    checked={userBooking}
-                    onChange={() => setUserBooking(!userBooking)}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
-              <div className="textSubText-0-1-183">
-                <div className="toggleHeading-0-1-178 undefined">
-                  <div className="permissionIconTextWrap-0-1-172">
-                    <div className="textWrapper-0-1-176">
-                      <span>
-                        <div>Vendor Orders</div>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="medium-0-1-180">
-                <div className="ui fitted toggle checkbox undefined ">
-                  <input
-                    type="checkbox"
-                    checked={vendorOrders}
-                    onChange={() => setVendorOrders(!vendorOrders)}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
-              <div className="textSubText-0-1-183">
-                <div className="toggleHeading-0-1-178 undefined">
-                  <div className="permissionIconTextWrap-0-1-172">
-                    <div className="textWrapper-0-1-176">
-                      <span>
-                        <div>Manage User's</div>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="medium-0-1-180">
-                <div className="ui fitted toggle checkbox undefined ">
-                  <input
-                    type="checkbox"
-                    checked={manageUser}
-                    onChange={() => setManageUser(!manageUser)}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
-              <div className="textSubText-0-1-183">
-                <div className="toggleHeading-0-1-178 undefined">
-                  <div className="permissionIconTextWrap-0-1-172">
-                    <div className="textWrapper-0-1-176">
-                      <span>
-                        <div>Manage Vendor's</div>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="medium-0-1-180">
-                <div className="ui fitted toggle checkbox undefined ">
-                  <input
-                    type="checkbox"
-                    checked={manageVendor}
-                    onChange={() => setManageVendor(!manageVendor)}
-                  />
-                </div>
-              </div>
-            </div>
-
             <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
               <div className="textSubText-0-1-183">
                 <div className="toggleHeading-0-1-178 undefined">
@@ -368,59 +273,14 @@ function EditTeam() {
                 <div className="ui fitted toggle checkbox undefined ">
                   <input
                     type="checkbox"
-                    checked={manageTeams}
-                    onChange={() => setManageTeams(!manageTeams)}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
-              <div className="textSubText-0-1-183">
-                <div className="toggleHeading-0-1-178 undefined">
-                  <div className="permissionIconTextWrap-0-1-172">
-                    <div className="textWrapper-0-1-176">
-                      <span>
-                        <div>Management rental Products</div>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="medium-0-1-180">
-                <div className="ui fitted toggle checkbox undefined ">
-                  <input
-                    type="checkbox"
-                    checked={manageSellProducts}
-                    onChange={() => setManageSellProducts(!manageSellProducts)}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
-              <div className="textSubText-0-1-183">
-                <div className="toggleHeading-0-1-178 undefined">
-                  <div className="permissionIconTextWrap-0-1-172">
-                    <div className="textWrapper-0-1-176">
-                      <span>
-                        <div>Management Sell Products</div>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="medium-0-1-180">
-                <div className="ui fitted toggle checkbox undefined ">
-                  <input
-                    type="checkbox"
-                    checked={manageRentalProducts}
-                    onChange={() =>
-                      setManageRentalProducts(!manageRentalProducts)
-                    }
+                    checked={teamManagement}
+                    onChange={() => setTeamManagement(!teamManagement)}
                   />
                 </div>
               </div>
             </div>
           </div>
+
           <br />
           <div className="footerNavContainer-0-1-444 footerNavContainer-d0-0-1-457">
             <Button

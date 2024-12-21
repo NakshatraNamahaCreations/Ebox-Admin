@@ -8,10 +8,13 @@ import axios from "axios";
 import { postData } from "../../../api-services/apiHelper";
 import Loader from "../../loader/Loader";
 import * as XLSX from "xlsx";
+import { FaDownload } from "react-icons/fa6";
+import Switch from "react-switch";
+import { Badge } from "react-bootstrap";
 
 function AddService() {
   const [serviceName, setServiceName] = useState("");
-  const [serviceImage, setServiceImage] = useState("");
+  const [searchServive, setSearchServive] = useState("");
   const [serviceListData, setServiceListData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [file, setFile] = useState(null);
@@ -114,17 +117,34 @@ function AddService() {
       }
     }
   };
-  const deleteService = async (id) => {
+  // const deleteService = async (id) => {
+  //   try {
+  //     const res = await axios.delete(
+  //       `${apiUrl.BASEURL}${apiUrl.DELETE_SERVICE}/${id}`
+  //     );
+  //     if (res.status === 200) {
+  //       // alert("Service Deleted");
+  //       fetchList();
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // };
+
+  const toggleServiceStatus = async (id, currentStatus) => {
     try {
-      const res = await axios.delete(
-        `${apiUrl.BASEURL}${apiUrl.DELETE_SERVICE}/${id}`
+      const res = await axios.put(
+        `${apiUrl.BASEURL}${apiUrl.UPDATE_SERVICE_STATUS}${id}`,
+        {
+          isActive: !currentStatus, // Toggle the current status
+        }
       );
       if (res.status === 200) {
-        // alert("Service Deleted");
-        fetchList();
+        fetchList(); // Refresh the service list
+        alert(res.data.message || "Service status updated!");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error updating service status:", error);
     }
   };
 
@@ -206,19 +226,50 @@ function AddService() {
             <div>
               <RxSlash size={16} />
             </div> */}
-            <div
+            <Switch
+              onChange={() => toggleServiceStatus(row._id, row.isActive)}
+              checked={row.isActive}
+              onColor="#080"
+              offHandleColor="#ddd"
+              onHandleColor="#ddd"
+              offColor="#888"
+              handleDiameter={20}
+              uncheckedIcon={false}
+              checkedIcon={false}
+              height={15}
+              width={35}
+            />
+            <Badge className="ms-2" bg={row.isActive ? "success" : "danger"}>
+              {row.isActive ? "Active" : "Inactive"}
+            </Badge>
+            {/* <div className="ms-2"></div> */}
+            {/* <div
               style={{ cursor: "pointer" }}
               title="Delete"
               onClick={() => deleteService(row._id)}
             >
               <MdDelete size={16} color="#E91E63" />
-            </div>
+            </div> */}
           </div>
         </>
       ),
       // sortable: true,
     },
   ];
+  const downloadDataset = () => {
+    const dataToDownload = serviceListData.map((item) => ({
+      service_name: item.service_name, // Include only the service_name field
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToDownload);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Service List");
+    XLSX.writeFile(workbook, "service-list.xlsx");
+  };
+
+  const filteredServiceListData = serviceListData.filter((service) =>
+    service.service_name.toLowerCase().includes(searchServive.toLowerCase())
+  );
 
   return (
     <div>
@@ -249,7 +300,7 @@ function AddService() {
                   style={{ fontSize: "14px", padding: "4px 7px" }}
                 />
               </div>
-              <div>
+              {/* <div>
                 <h6 className="mt-3" style={styles.header}>
                   Service Image:
                 </h6>
@@ -261,7 +312,7 @@ function AddService() {
                   onChange={(e) => setServiceImage(e.target.files[0])}
                   style={{ fontSize: "14px", padding: "4px 7px" }}
                 />
-              </div>
+              </div> */}
               <div className="mt-3 mb-2">
                 <button onClick={addService} style={styles.buttonForEveything}>
                   Add Service
@@ -305,11 +356,43 @@ function AddService() {
               }}
             >
               <div className="p-2">
-                <h3 style={styles.itemsHead}>Service List</h3>
+                <div
+                  className="p-3"
+                  style={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    display: "flex",
+                  }}
+                >
+                  <div>
+                    <h3 style={styles.itemsHead}>Service List</h3>
+                  </div>
+                  <div style={{ justifyContent: "flex-end" }}>
+                    {/* <b style={{ fontSize: "12px" }}>Search: </b> */}
+                    <input
+                      className="ms-1"
+                      placeholder="Search service"
+                      style={{
+                        border: "1px solid #ebedf2",
+                        padding: "2px 5px",
+                        borderRadius: "5px",
+                      }}
+                      onChange={(e) => setSearchServive(e.target.value)}
+                    />{" "}
+                    <FaDownload
+                      onClick={downloadDataset}
+                      className="ms-2 me-2"
+                      style={{ cursor: "pointer" }}
+                      size={16}
+                      color="#2F4E9E"
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <DataTable
                     columns={columns}
-                    data={serviceListData}
+                    data={filteredServiceListData}
                     pagination
                     //   defaultSortFieldId={1}
                   />

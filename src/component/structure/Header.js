@@ -7,12 +7,17 @@ function Header() {
   const { globalData } = useContext(GlobalContext);
   const location = useLocation();
   const { pathname } = location;
+  // const storedUser = sessionStorage.getItem("user");
+  // const user = JSON.parse(storedUser);
 
   switch (pathname) {
     case "/dashboard":
       return (
         <div>
-          <div className="headerTitle-0-1-70">Hi, Admin</div>
+          <div className="headerTitle-0-1-70">
+            Hi, Admin
+            {/* {user.member_name} */}
+          </div>
           <div className="headerDesc-0-1-71">
             <div>Welcome Back!</div>
           </div>
@@ -36,17 +41,41 @@ function Header() {
           <div className="headerTitle-0-1-70">Requirements</div>
         </div>
       );
+    case "/state":
+      return (
+        <div>
+          <div className="headerTitle-0-1-70">States</div>
+        </div>
+      );
+    case "/city":
+      return (
+        <div>
+          <div className="headerTitle-0-1-70">Cities</div>
+        </div>
+      );
+    case "/address":
+      return (
+        <div>
+          <div className="headerTitle-0-1-70">Address</div>
+        </div>
+      );
+    case "/booking/user-bookings":
+      return (
+        <div>
+          <div className="headerTitle-0-1-70">User Payment Reports</div>
+        </div>
+      );
     case "/booking/booking-history":
       return (
         <div>
-          <div className="headerTitle-0-1-70">Booking History</div>
+          <div className="headerTitle-0-1-70">Payment History</div>
         </div>
       );
     case "/booking/booking-details":
       return (
         <div className="d-flex" style={{ justifyContent: "space-between" }}>
-          <div className="headerTitle-0-1-70">Booking Details</div>
-          <div className="headerDesc-0-1-71">
+          <div className="headerTitle-0-1-70">Payment Details</div>
+          {/* <div className="headerDesc-0-1-71">
             <a
               href="/booking/booking-history"
               style={{
@@ -59,7 +88,7 @@ function Header() {
             >
               <IoIosArrowBack /> Back
             </a>
-          </div>
+          </div> */}
         </div>
       );
 
@@ -96,6 +125,10 @@ function Header() {
           </div>
         </div>
       );
+    case "/user-list":
+      return (
+        <div>{/* <div className="headerTitle-0-1-70">User List</div> */}</div>
+      );
     case "/spotlight-banner":
       return (
         <div>
@@ -125,10 +158,29 @@ function Header() {
           </div>
         </div>
       );
-    case "/booking/booking-schedules":
+    case "/product/selling":
+      return (
+        <div
+          className="d-flex mb-3"
+          style={{ justifyContent: "space-between" }}
+        >
+          <div className="headerTitle-0-1-70">Selling Products</div>
+        </div>
+      );
+    case "/product/rentals":
+      return (
+        <div
+          className="d-flex mb-3"
+          style={{ justifyContent: "space-between" }}
+        >
+          <div className="headerTitle-0-1-70">Rentals Products</div>
+        </div>
+      );
+
+    case "/order/vendor-orders":
       return (
         <div>
-          <div className="headerTitle-0-1-70">Booking Schedules </div>
+          <div className="headerTitle-0-1-70">Vendor Order's</div>
         </div>
       );
     case "/team/team-list":
@@ -160,47 +212,46 @@ function Header() {
           <div className="headerTitle-0-1-70">Create Teams</div>
         </div>
       );
-    case "/campaigns/list":
+    case "/faq-list":
       return (
         <div>
-          <div className="headerTitle-0-1-70">Campaigns</div>
+          <div className="headerTitle-0-1-70">FAQs</div>
           <div className="headerDesc-0-1-71">
-            <div>Create & manage campaigns</div>
-          </div>
-        </div>
-      );
-    case "/campaigns/create":
-      return (
-        <div>
-          <div className="headerTitle-0-1-70">
-            Create Your Marketing Campaign
-          </div>
-          <div className="headerDesc-0-1-71">
-            <div>You can create Marketing Campaign for different usecases</div>
-          </div>
-        </div>
-      );
-    case "/campaigns/create/useractioncampaign/channel":
-      return (
-        <div>
-          <div className="headerTitle-0-1-70">
-            Create User Action Based Campaign
-          </div>
-          <div className="headerDesc-0-1-71">
-            <div>
-              Set campaign details, choose target audience and edit content
-              before publishing campaign
+            <div className="mt-2">
+              <button
+                style={{
+                  backgroundColor: "#90e447",
+                  border: "#7ac536",
+                  color: "white",
+                  borderRadius: "3px",
+                  fontSize: "15px",
+                  padding: "5px 10px",
+                }}
+                onClick={() => window.location.assign("/add-faq")}
+              >
+                + Add
+              </button>
             </div>
           </div>
         </div>
       );
-    case "/people/users":
+    case "/add-faq":
       return (
         <div>
-          <div className="headerTitle-0-1-70">Users</div>
-          <div className="headerDesc-0-1-71">
-            <div>View, Filter & Manage all your users on site/app</div>
-          </div>
+          <div className="headerTitle-0-1-70">FAQs</div>
+        </div>
+      );
+    case "/terms-and-condition-list":
+      return (
+        <div>
+          <div className="headerTitle-0-1-70">Terms & Conditions</div>
+        </div>
+      );
+
+    case "/youtube-video":
+      return (
+        <div>
+          <div className="headerTitle-0-1-70">Youtube Videos</div>
         </div>
       );
     case "/people/team-members":

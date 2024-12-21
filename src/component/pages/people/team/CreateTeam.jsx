@@ -21,17 +21,21 @@ import { apiUrl } from "../../../../api-services/apiContents";
 function CreateTeam() {
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
   const [dashboard, setDashboard] = useState(false);
   const [banner, setBanner] = useState(false);
-  const [bookingManagement, setBookingManagement] = useState(false);
-  const [vendorManagement, setVendorManagement] = useState(false);
-  const [teamManagement, setTeamManagement] = useState(false);
-  const [userManagement, setUserManagement] = useState(false);
-  // const [freeMaterial, setFreeMaterial] = useState(false);
-  // const [campaign, setCampaign] = useState(false);
-  // const [course, setCourse] = useState(false);
-  // const [selfService, setSelfService] = useState(false);
+  const [service, setService] = useState(false);
+  const [subService, setSubService] = useState(false);
+  const [requirements, setRequirements] = useState(false);
+  const [userBooking, setUserBooking] = useState(false);
+  const [vendorOrders, setVendorOrders] = useState(false);
+  const [manageUser, setManageUser] = useState(false);
+  const [manageVendor, setManageVendor] = useState(false);
+  const [manageTeams, setManageTeams] = useState(false);
+
+  const [manageSellProducts, setManageSellProducts] = useState(false);
+  const [manageRentalProducts, setManageRentalProducts] = useState(false);
 
   const addTeamMember = async () => {
     if (!name || !phoneNumber) {
@@ -41,17 +45,20 @@ function CreateTeam() {
         const data = {
           member_name: name,
           mobile_number: phoneNumber,
+          email_id: emailId,
           password: password,
-          dashboard: dashboard,
-          // banner: banner,
-          booking_management: bookingManagement,
-          vendor_management: vendorManagement,
-          team_management: teamManagement,
-          user_management: userManagement,
-          // freeMaterial: freeMaterial,
-          // campaign: campaign,
-          // course: course,
-          // selfService: selfService,
+          dashboard_management: dashboard,
+          banner_management: banner,
+          service_management: service,
+          subservice_management: subService,
+          requirement_management: requirements,
+          userbooking_management: userBooking,
+          vendororder_management: vendorOrders,
+          manage_user: manageUser,
+          manage_vendor: manageVendor,
+          manage_teammemebrs: manageTeams,
+          manage_sellproducts: manageSellProducts,
+          manage_rentalproducts: manageRentalProducts,
         };
         const res = await postData(apiUrl.CREATE_TEAM, data);
         if (res) {
@@ -68,7 +75,7 @@ function CreateTeam() {
   return (
     <div className="root-0-1-732 contentContainer-0-1-726 mt-2">
       <div className="leftSection-0-1-728 row">
-        <div className="label-0-1-733 col-md-4">
+        <div className="label-0-1-733 col-md-3">
           <div className="labelText-0-1-734">Name</div>
           <div className="inputContainer-0-1-133 undefined ">
             <input
@@ -79,7 +86,7 @@ function CreateTeam() {
             />
           </div>
         </div>
-        <div className="label-0-1-733 col-md-4">
+        <div className="label-0-1-733 col-md-3">
           <div className="labelText-0-1-734">Phone number </div>
           <div className="inputContainer-0-1-133 undefined ">
             <input
@@ -91,7 +98,18 @@ function CreateTeam() {
             />
           </div>
         </div>
-        <div className="label-0-1-733 col-md-4">
+        <div className="label-0-1-733 col-md-3">
+          <div className="labelText-0-1-734">Email Id</div>
+          <div className="inputContainer-0-1-133 undefined ">
+            <input
+              className="input-0-1-134 input-d23-0-1-1126 undefined"
+              placeholder="Email"
+              type="email"
+              onChange={(e) => setEmailId(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="label-0-1-733 col-md-3">
           <div className="labelText-0-1-734">Password</div>
           <div className="inputContainer-0-1-133 undefined ">
             <input
@@ -105,7 +123,7 @@ function CreateTeam() {
       </div>
       <div className="labelText-0-1-734">Permissions</div>
       <div className="label-0-1-733 mt-2 row">
-        <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
+        {/* <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
           <div className="textSubText-0-1-183">
             <div className="toggleHeading-0-1-178 undefined">
               <div className="permissionIconTextWrap-0-1-172">
@@ -126,9 +144,9 @@ function CreateTeam() {
               />
             </div>
           </div>
-        </div>
+        </div> */}
 
-        {/* <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
+        <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
           <div className="textSubText-0-1-183">
             <div className="toggleHeading-0-1-178 undefined">
               <div className="permissionIconTextWrap-0-1-172">
@@ -149,14 +167,14 @@ function CreateTeam() {
               />
             </div>
           </div>
-        </div> */}
+        </div>
         <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
           <div className="textSubText-0-1-183">
             <div className="toggleHeading-0-1-178 undefined">
               <div className="permissionIconTextWrap-0-1-172">
                 <div className="textWrapper-0-1-176">
                   <span>
-                    <div>Booking Management</div>
+                    <div>Service</div>
                   </span>
                 </div>
               </div>
@@ -166,8 +184,8 @@ function CreateTeam() {
             <div className="ui fitted toggle checkbox undefined ">
               <input
                 type="checkbox"
-                checked={bookingManagement}
-                onChange={() => setBookingManagement(!bookingManagement)}
+                checked={service}
+                onChange={() => setService(!service)}
               />
             </div>
           </div>
@@ -178,7 +196,7 @@ function CreateTeam() {
               <div className="permissionIconTextWrap-0-1-172">
                 <div className="textWrapper-0-1-176">
                   <span>
-                    <div>User Management</div>
+                    <div>Sub Service</div>
                   </span>
                 </div>
               </div>
@@ -188,8 +206,8 @@ function CreateTeam() {
             <div className="ui fitted toggle checkbox undefined ">
               <input
                 type="checkbox"
-                checked={userManagement}
-                onChange={() => setUserManagement(!userManagement)}
+                checked={subService}
+                onChange={() => setSubService(!subService)}
               />
             </div>
           </div>
@@ -200,7 +218,7 @@ function CreateTeam() {
               <div className="permissionIconTextWrap-0-1-172">
                 <div className="textWrapper-0-1-176">
                   <span>
-                    <div>Vendor Management</div>
+                    <div>Requirements</div>
                   </span>
                 </div>
               </div>
@@ -210,12 +228,101 @@ function CreateTeam() {
             <div className="ui fitted toggle checkbox undefined ">
               <input
                 type="checkbox"
-                checked={vendorManagement}
-                onChange={() => setVendorManagement(!vendorManagement)}
+                checked={requirements}
+                onChange={() => setRequirements(!requirements)}
               />
             </div>
           </div>
         </div>
+        <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
+          <div className="textSubText-0-1-183">
+            <div className="toggleHeading-0-1-178 undefined">
+              <div className="permissionIconTextWrap-0-1-172">
+                <div className="textWrapper-0-1-176">
+                  <span>
+                    <div>User Bookings</div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="medium-0-1-180">
+            <div className="ui fitted toggle checkbox undefined ">
+              <input
+                type="checkbox"
+                checked={userBooking}
+                onChange={() => setUserBooking(!userBooking)}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
+          <div className="textSubText-0-1-183">
+            <div className="toggleHeading-0-1-178 undefined">
+              <div className="permissionIconTextWrap-0-1-172">
+                <div className="textWrapper-0-1-176">
+                  <span>
+                    <div>Vendor Orders</div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="medium-0-1-180">
+            <div className="ui fitted toggle checkbox undefined ">
+              <input
+                type="checkbox"
+                checked={vendorOrders}
+                onChange={() => setVendorOrders(!vendorOrders)}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
+          <div className="textSubText-0-1-183">
+            <div className="toggleHeading-0-1-178 undefined">
+              <div className="permissionIconTextWrap-0-1-172">
+                <div className="textWrapper-0-1-176">
+                  <span>
+                    <div>Manage User's</div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="medium-0-1-180">
+            <div className="ui fitted toggle checkbox undefined ">
+              <input
+                type="checkbox"
+                checked={manageUser}
+                onChange={() => setManageUser(!manageUser)}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
+          <div className="textSubText-0-1-183">
+            <div className="toggleHeading-0-1-178 undefined">
+              <div className="permissionIconTextWrap-0-1-172">
+                <div className="textWrapper-0-1-176">
+                  <span>
+                    <div>Manage Vendor's</div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="medium-0-1-180">
+            <div className="ui fitted toggle checkbox undefined ">
+              <input
+                type="checkbox"
+                checked={manageVendor}
+                onChange={() => setManageVendor(!manageVendor)}
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
           <div className="textSubText-0-1-183">
             <div className="toggleHeading-0-1-178 undefined">
@@ -232,30 +339,8 @@ function CreateTeam() {
             <div className="ui fitted toggle checkbox undefined ">
               <input
                 type="checkbox"
-                checked={teamManagement}
-                onChange={() => setTeamManagement(!teamManagement)}
-              />
-            </div>
-          </div>
-        </div>
-        {/* <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
-          <div className="textSubText-0-1-183">
-            <div className="toggleHeading-0-1-178 undefined">
-              <div className="permissionIconTextWrap-0-1-172">
-                <div className="textWrapper-0-1-176">
-                  <span>
-                    <div>Free Study Material</div>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="medium-0-1-180">
-            <div className="ui fitted toggle checkbox undefined ">
-              <input
-                type="checkbox"
-                checked={freeMaterial}
-                onChange={(e) => setFreeMaterial(!freeMaterial)}
+                checked={manageTeams}
+                onChange={() => setManageTeams(!manageTeams)}
               />
             </div>
           </div>
@@ -266,7 +351,7 @@ function CreateTeam() {
               <div className="permissionIconTextWrap-0-1-172">
                 <div className="textWrapper-0-1-176">
                   <span>
-                    <div>Campaign</div>
+                    <div>Management rental Products</div>
                   </span>
                 </div>
               </div>
@@ -276,8 +361,8 @@ function CreateTeam() {
             <div className="ui fitted toggle checkbox undefined ">
               <input
                 type="checkbox"
-                checked={campaign}
-                onChange={(e) => setCampaign(!campaign)}
+                checked={manageSellProducts}
+                onChange={() => setManageSellProducts(!manageSellProducts)}
               />
             </div>
           </div>
@@ -288,7 +373,7 @@ function CreateTeam() {
               <div className="permissionIconTextWrap-0-1-172">
                 <div className="textWrapper-0-1-176">
                   <span>
-                    <div>Course</div>
+                    <div>Management Sell Products</div>
                   </span>
                 </div>
               </div>
@@ -298,37 +383,12 @@ function CreateTeam() {
             <div className="ui fitted toggle checkbox undefined ">
               <input
                 type="checkbox"
-                checked={course}
-                onChange={(e) => setCourse(!course)}
+                checked={manageRentalProducts}
+                onChange={() => setManageRentalProducts(!manageRentalProducts)}
               />
             </div>
           </div>
-        </div> */}
-        {/* <div className="toggleContainer-0-1-177 toggleBar-0-1-171 col-md-3">
-                <div className="textSubText-0-1-183">
-                  <div className="toggleHeading-0-1-178 undefined">
-                    <div className="permissionIconTextWrap-0-1-172">
-                      <div className="permissionIconTextWrapIcon-0-1-173">
-                        <PiPathDuotone />
-                      </div>
-                      <div className="textWrapper-0-1-176">
-                        <span>
-                          <div>Self Service</div>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="medium-0-1-180">
-                  <div className="ui fitted toggle checkbox undefined ">
-                    <input
-                      type="checkbox"
-                      checked={selfService}
-                      onChange={(e) => setSelfService(!selfService)}
-                    />
-                  </div>
-                </div>
-              </div> */}
+        </div>
       </div>
 
       <br />

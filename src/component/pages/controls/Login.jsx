@@ -1,10 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import "../controls/login.css";
 import { LuBoxes } from "react-icons/lu";
+import axios from "axios";
+import { apiUrl } from "../../../api-services/apiContents";
 
 function Login() {
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleLogin = async () => {
-    window.location.assign("/");
+    if (!mobileNumber || !password) {
+      alert("Mobile and Password are required");
+      return;
+    }
+    setLoading(true);
+    try {
+      const config = {
+        url: apiUrl.TEAM_USER_LOGIN,
+        method: "post",
+        baseURL: apiUrl.BASEURL,
+        headers: { "Content-Type": "application/json" },
+        data: {
+          mobile_number: mobileNumber,
+          password: password,
+        },
+      };
+      const response = await axios(config);
+      if (response.status === 200) {
+        alert(response.data.message || "Login Success");
+        console.log("login details", response.data.user);
+        sessionStorage.setItem("user", JSON.stringify(response.data.user));
+        window.location.assign("/dashboard");
+      }
+    } catch (error) {
+      setLoading(false);
+      const errorMessage = error.response?.data?.message || "Login failed";
+      console.log("catch error:", error.response?.data?.message);
+      alert(errorMessage);
+    }
   };
 
   return (
@@ -18,7 +52,7 @@ function Login() {
           /> */}
           <h3 style={{ fontSize: "30px" }}>
             {" "}
-            <LuBoxes size={25} color="#90e447" /> Event Box
+            <LuBoxes size={25} color="#90e447" /> Nithya Events
           </h3>
           <h3 style={{ fontSize: "22px" }}>Multiuser - Dashboard</h3>
         </div>
@@ -32,41 +66,37 @@ function Login() {
 
           <div className="box-body">
             <div className="form-group" style={{ marginBottom: "15px" }}>
-              <label for="exampleInputEmail1">Username :</label>
+              <label for="exampleInputEmail1">Mobile Number :</label>
               <input
-                type="text"
-                name="username"
+                type="tel"
                 className="form-control"
-                value="admin"
+                value={mobileNumber}
                 required=""
+                maxLength={10}
+                onChange={(e) => setMobileNumber(e.target.value)}
               />
             </div>
             <div className="form-group" style={{ marginBottom: "15px" }}>
               <label for="exampleInputEmail1">Password :</label>
               <input
-                type="password"
+                // type="password"
                 className="form-control"
-                name="password"
-                value="admin123"
+                value={password}
                 required=""
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <div className="box-footer">
-              <button
-                //   name="btnLogin"
-                // style={{ color: "white" }}
-                className="btn btn-info pull-left"
-                onClick={handleLogin}
-              >
-                Login
+              <button className="btn btn-info pull-left" onClick={handleLogin}>
+                {loading ? "Loging in..." : "Login"}
               </button>
-              <a
+              {/* <a
                 href="forgot-password.php"
                 className="pull-right"
                 style={{ fontSize: "14px" }}
               >
                 Forgot Password?
-              </a>
+              </a> */}
             </div>
           </div>
         </div>

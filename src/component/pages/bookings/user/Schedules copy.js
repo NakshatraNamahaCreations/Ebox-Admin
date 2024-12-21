@@ -2,7 +2,7 @@ import moment from "moment";
 import React from "react";
 import { momentLocalizer } from "react-big-calendar";
 import { Calendar } from "react-big-calendar";
-import { scheduleData } from "../../../global-data/booking";
+import { scheduleData } from "../../../../global-data/booking";
 import { useNavigate } from "react-router-dom";
 
 function Schedules() {

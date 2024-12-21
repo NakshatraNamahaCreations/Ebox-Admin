@@ -1,13 +1,84 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { apiUrl } from "../../../../api-services/apiContents";
 import moment from "moment";
-import VendorProductList from "./VendorProductList";
+// import VendorProductList from "./VendorProductList";
+import axios from "axios";
+import Switch from "react-switch";
+import { Button } from "react-bootstrap";
 
 function VendorDetails() {
   const location = useLocation();
   const vendor = location.state.vendor;
+  const [commission, setCommission] = useState(
+    vendor.commission_percentage || ""
+  );
   // console.log("vendor details in cendor det>>", vendor);
+
+  const makeVendorApproval = async () => {
+    try {
+      const res = await axios.put(
+        `${apiUrl.BASEURL}${apiUrl.VENDOR_APPROVE}${vendor._id}`
+      );
+      if (res.status === 200) {
+        console.log(res.data);
+        alert("Approved Successfully");
+        window.location.assign("/vendor-list");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const makeVendorDisapproval = async () => {
+    try {
+      const res = await axios.put(
+        `${apiUrl.BASEURL}${apiUrl.VENDOR_DISAPPROVE}${vendor._id}`
+      );
+      if (res.status === 200) {
+        console.log(res.data);
+        alert("Disapproved Successfully");
+        window.location.assign("/vendor-list");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const toggleServiceStatus = async (id, currentStatus) => {
+    try {
+      const res = await axios.patch(
+        `${apiUrl.BASEURL}${apiUrl.UPDATE_SERVICE_STATUS}/${id}`,
+        {
+          isActive: !currentStatus, // Toggle the current status
+        }
+      );
+      if (res.status === 200) {
+        window.location.assign("/vendor-list");
+        // fetchVendors(); // Refresh the service list
+      }
+    } catch (error) {
+      console.error("Error updating service status:", error);
+    }
+  };
+
+  const addCommissions = async () => {
+    try {
+      const res = await axios.put(
+        `${apiUrl.BASEURL}${apiUrl.ADD_COMMISSION}${vendor._id}`,
+        {
+          commission_percentage: commission,
+          commission_tax: 18,
+        }
+      );
+      if (res.status === 200) {
+        alert("Commission Added Successfully");
+        window.location.assign("/vendor-list");
+      }
+    } catch (error) {
+      console.error("Error updating service status:", error);
+    }
+  };
 
   return (
     <div className="ps-3 pt-2 ">
@@ -36,12 +107,42 @@ function VendorDetails() {
               <span
                 style={{
                   color: vendor.is_approved === true ? "#35d482" : "red",
-                  fontSize: "20px",
+                  // fontSize: "20px",
                 }}
               >
                 {" "}
                 {vendor.is_approved === true ? "Approved" : "Not Approved"}{" "}
               </span>{" "}
+            </lable>
+            <br />
+            <lable style={styles.lable}>
+              Action:{" "}
+              <span
+                style={{
+                  color: vendor.isActive === true ? "#35d482" : "red",
+                  // fontSize: "20px",
+                }}
+              >
+                {vendor.isActive === true ? "Active" : "In Active"}{" "}
+              </span>{" "}
+              <span>
+                <Switch
+                  className="mt-2"
+                  onChange={() =>
+                    toggleServiceStatus(vendor._id, vendor.isActive)
+                  }
+                  checked={vendor.isActive}
+                  onColor="#080"
+                  offHandleColor="#ddd"
+                  onHandleColor="#ddd"
+                  offColor="#888"
+                  handleDiameter={20}
+                  uncheckedIcon={false}
+                  checkedIcon={false}
+                  height={15}
+                  width={35}
+                />
+              </span>
             </lable>
             <br />
             <div className="mt-2">
@@ -55,10 +156,26 @@ function VendorDetails() {
                     borderRadius: "7px",
                     boxShadow: "0px 1px 3px 0px #5d5d5d",
                   }}
+                  onClick={makeVendorApproval}
                 >
                   Approve
                 </button>
               )}
+              {/* {vendor.is_approved === true && (
+                <button
+                  style={{
+                    border: 0,
+                    fontSize: "14px",
+                    backgroundColor: "#ff005d",
+                    color: "white",
+                    borderRadius: "7px",
+                    boxShadow: "0px 1px 3px 0px #5d5d5d",
+                  }}
+                  onClick={makeVendorDisapproval}
+                >
+                  Disapprove
+                </button>
+              )} */}
             </div>
           </div>
           <div className="row">
@@ -204,8 +321,80 @@ function VendorDetails() {
                 style={{ width: "50%", height: "50%" }}
               />
             </div>
+            <div className="col-md-3 mb-3">
+              <lable style={styles.lable}>Commission % </lable>
+              <br />
+              <input
+                style={styles.input}
+                type="number"
+                min={1}
+                value={commission}
+                onChange={(e) => setCommission(e.target.value)}
+              />
+            </div>
+            <div className="col-md-3 mb-3">
+              <lable style={styles.lable}>Commission Tax </lable>
+              <br />
+              <input style={styles.input} disabled value={18} />
+            </div>
+            <div className="col-md-3 mt-4">
+              <Button onClick={addCommissions}>Add</Button>
+            </div>
           </div>
-          <br />
+          {/* <lable style={{ color: "#333", fontSize: "17px", fontWeight: "600" }}>
+         Bank 
+          </lable> */}
+          <div className="row">
+            <div className="col-md-3 mb-3">
+              <lable style={styles.lable}>Bank Name</lable>
+              <br />
+              <input
+                style={styles.input}
+                // disabled
+                // value={vendor.vendor_name ? vendor.vendor_name : "NA"}
+              />
+            </div>
+            <div className="col-md-3 mb-3">
+              <lable style={styles.lable}>Bank Account Holder</lable>
+              <br />
+              <input
+                style={styles.input}
+                // disabled
+                // value={vendor.vendor_name ? vendor.vendor_name : "NA"}
+              />
+            </div>
+            <div className="col-md-3 mb-3">
+              <lable style={styles.lable}>Bank Account</lable>
+              <br />
+              <input
+                style={styles.input}
+                // disabled
+                // value={vendor.vendor_name ? vendor.vendor_name : "NA"}
+              />
+            </div>
+            <div className="col-md-3 mb-3">
+              <lable style={styles.lable}>Bank IFSC</lable>
+              <br />
+              <input
+                style={styles.input}
+                // disabled
+                // value={vendor.vendor_name ? vendor.vendor_name : "NA"}
+              />
+            </div>
+            <div className="col-md-3 mb-3">
+              <lable style={styles.lable}>Bank Branch</lable>
+              <br />
+              <input
+                style={styles.input}
+                // disabled
+                // value={vendor.vendor_name ? vendor.vendor_name : "NA"}
+              />
+            </div>
+            <div className="col-md-3 mt-4">
+              <Button>Add Bank</Button>
+            </div>
+          </div>
+          {/* <br />
           <lable style={{ color: "#333", fontSize: "17px", fontWeight: "600" }}>
             Product Listings
           </lable>
@@ -214,7 +403,7 @@ function VendorDetails() {
           <VendorProductList
             vendorID={vendor._id}
             vendorName={vendor.vendor_name}
-          />
+          /> */}
         </div>
       </div>
     </div>

@@ -44,11 +44,6 @@ function VendorProductList({ vendorID }) {
   };
 
   const columns = [
-    // {
-    //   name: "Product ID",
-    //   selector: (row) => `#${row._id?.slice(-3)}`,
-    //   sortable: true,
-    // },
     {
       name: "Product Name",
       selector: (row) => row.product_name,
