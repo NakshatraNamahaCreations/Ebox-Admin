@@ -1,22 +1,33 @@
 import React, { useContext, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import "../../../../styles/booking-history.css";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaFilter } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { get } from "../../../../api-services/apiHelper";
 import { apiUrl } from "../../../../api-services/apiContents";
 import Loader from "../../../loader/Loader";
 import GlobalContext from "../../../../hooks/GlobalProvider";
-// import { FaUserAltSlash } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
-import { Badge } from "react-bootstrap";
+import { FaCheck } from "react-icons/fa6";
+import { MdDelete, MdMotionPhotosOff } from "react-icons/md";
+import { Badge, Button } from "react-bootstrap";
+import * as XLSX from "xlsx";
+import { TbFileTypeXls } from "react-icons/tb";
+import axios from "axios";
+import { FaDownload } from "react-icons/fa6";
 
 function VendorList() {
   const Navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
+  const [search, setSearch] = useState("");
+  const [showFilter, setShowFilter] = useState(false);
   // const [vendorsLength, setVendorsLength] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const { setGlobalData } = useContext(GlobalContext);
+  const [statusType, setStatusType] = useState("");
+
+  const handleShowFilter = () => {
+    setShowFilter(!showFilter);
+  };
 
   const fetchVendors = async () => {
     setIsLoading(true);
@@ -47,12 +58,46 @@ function VendorList() {
       },
     });
   };
+
+  const deleteVendor = async (id) => {
+    try {
+      const res = await axios.delete(
+        `${apiUrl.BASEURL}${apiUrl.DELETE_VENDOR}${id}`
+      );
+      if (res.status === 200) {
+        alert("Vendor Deleted");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const searchResults = vendors
+    .filter((vdr) => {
+      if (search) {
+        return (
+          vdr.vendor_name.toLowerCase().includes(search.toLowerCase()) ||
+          vdr.mobile_number.toLowerCase().includes(search.toLowerCase())
+        );
+      }
+      return true;
+    })
+    .filter((item) => {
+      if (statusType === "") {
+        return true;
+      }
+      return item.is_approved === (statusType === "true");
+    });
+
+  console.log("searchResults", searchResults);
+
   const columns = [
-    {
-      name: "Vendor Id",
-      selector: (row, index) => row._id?.substring(row._id),
-      sortable: true,
-    },
+    // {
+    //   name: "Vendor Id",
+    //   selector: (row, index) => row._id?.substring(row._id),
+    //   sortable: true,
+    // },
     {
       name: "Vendor Name",
       selector: (row) => (
@@ -72,22 +117,20 @@ function VendorList() {
           </div>
         </>
       ),
-      sortable: true,
     },
     {
       name: "Email",
       selector: (row) => row.email,
-      sortable: true,
     },
     {
       name: "Mobile",
       selector: (row) => "+91" + "-" + row.mobile_number,
-      sortable: true,
     },
     {
       name: "Status",
       selector: (row) => (
-        // <div
+        <>
+          {/* // <div
         //   style={{
         //     backgroundColor: "#35cd3a",
         //     borderRadius: "5px",
@@ -96,14 +139,13 @@ function VendorList() {
         //     borderRadius: "15px",
         //     // color: row.is_approved === true ? "green" : "red",
         //   }}
-        // >
-        <Badge bg={row.is_approved === true ? "success" : "danger"}>
-          {row.is_approved === true ? "Approved" : "Not Approved"}
-        </Badge>
-
+        // > */}
+          <Badge bg={row.is_approved ? "success" : "danger"}>
+            {row.is_approved ? "Approved" : "Disapproved"}
+          </Badge>
+        </>
         // </div>
       ),
-      sortable: true,
     },
     {
       name: "Action",
@@ -132,43 +174,95 @@ function VendorList() {
               // borderLeftTopRadius: "3px",
             }}
             title="Delete"
+            onClick={() => deleteVendor(row._id)}
           >
             <MdDelete size={16} color="white" />
           </div>
+
+          <div
+            style={{
+              cursor: "pointer",
+              backgroundColor: row.isActive ? "#198754" : "#ffc107",
+              padding: "7px 13px",
+            }}
+            title={row.isActive ? "Active" : "Inactive"}
+          >
+            {row.isActive ? (
+              <FaCheck size={16} color="white" />
+            ) : (
+              <MdMotionPhotosOff size={16} color="white" />
+            )}
+          </div>
         </div>
       ),
-      // sortable: true,
     },
   ];
 
+  const downloadReport = () => {
+    const dataToDownload = searchResults.map((item) => ({
+      vendor_name: item.vendor_name,
+      email: item.email,
+      mobile: item.mobile_number,
+      status: item.is_approved ? "Approved" : "Disapproved",
+      Action: item.isActive ? "Active" : "Inactive",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToDownload);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "vendor");
+    XLSX.writeFile(workbook, "vendors-list.xlsx");
+  };
+
   return (
-    <div>
+    <div style={{ backgroundColor: "white" }}>
       {isLoading && <Loader />}
       {!isLoading && (
         <div>
-          <div style={{ textAlign: "right" }}>
-            <input
-              type="search"
-              // value={serviceName}
-              placeholder="🔍 Search..."
-              // onChange={(e) => setServiceName(e.target.value)}
-              style={{
-                fontSize: "14px",
-                padding: "7px",
-                border: "1px solid #ebedf2",
-                outline: 0,
-                width: "25%",
-                borderRadius: "7px",
-              }}
-            />
-            <br /> <br />
+          <div className="row mt-2 mb-1 pt-3 ps-2">
+            <div className="col-md-8">
+              <input
+                type="search vendor/mobile"
+                value={search}
+                placeholder="Search..."
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  fontSize: "14px",
+                  padding: "7px",
+                  border: "1px solid #ebedf2",
+                  outline: 0,
+                  width: "35%",
+                  borderRadius: "7px",
+                }}
+              />
+            </div>
+            <div
+              className="col-md-4 d-flex"
+              style={{ justifyContent: "flex-end" }}
+            >
+              <select
+                style={{
+                  border: "1px solid #ebedf2",
+                  padding: "2px 5px",
+                  borderRadius: "5px",
+                }}
+                value={statusType}
+                onChange={(e) => setStatusType(e.target.value)}
+              >
+                <option value="">Filter</option>
+                <option value="true">Approve</option>
+                <option value="false">Disapprove</option>
+              </select>
+              <FaDownload
+                onClick={downloadReport}
+                className="ms-3 me-5"
+                style={{ cursor: "pointer", marginTop: "10px" }}
+                size={16}
+                color="#2F4E9E"
+              />
+            </div>
           </div>
-          <DataTable
-            columns={columns}
-            data={vendors}
-            pagination
-            //   defaultSortFieldId={1}
-          />
+
+          <DataTable columns={columns} data={searchResults} pagination />
         </div>
       )}
     </div>

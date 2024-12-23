@@ -3,22 +3,25 @@ import DataTable from "react-data-table-component";
 // import { FaEye } from "react-icons/fa";
 // import { RxSlash } from "react-icons/rx";
 import { MdDelete } from "react-icons/md";
-import { apiUrl } from "../../../api-services/apiContents";
+import { apiUrl } from "../../../../api-services/apiContents";
 import axios from "axios";
-import { postData } from "../../../api-services/apiHelper";
-import Loader from "../../loader/Loader";
+import { postData } from "../../../../api-services/apiHelper";
+import Loader from "../../../loader/Loader";
 import * as XLSX from "xlsx";
 import { FaDownload } from "react-icons/fa6";
 import Switch from "react-switch";
 import { Badge } from "react-bootstrap";
 
-function AddService() {
+function Technicians() {
   const [serviceName, setServiceName] = useState("");
   const [searchServive, setSearchServive] = useState("");
-  const [serviceListData, setServiceListData] = useState([]);
+  const [allTech, setAllTech] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [file, setFile] = useState(null);
   const [statusType, setStatusType] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [price, setPrice] = useState("");
+  const [bannerImage, setBannerImage] = useState(null);
 
   // Example Data
   const products = [
@@ -81,11 +84,11 @@ function AddService() {
   const fetchList = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.get(`${apiUrl.BASEURL}${apiUrl.GET_ALL_SERVICE}`);
+      const res = await axios.get(
+        `${apiUrl.BASEURL}${apiUrl.GET_ALL_TECHNICIAN}`
+      );
       if (res.status === 200) {
-        // console.log("res", res);
-
-        setServiceListData(res.data.data);
+        setAllTech(res.data.tech?.reverse());
       }
     } catch (error) {
       console.error("Failed to fetch list:", error);
@@ -99,18 +102,23 @@ function AddService() {
   }, []);
 
   const addService = async () => {
-    if (!serviceName) {
-      alert("Service Name should not empty");
+    if (!price || !serviceName || !selectedCategory || !bannerImage) {
+      alert("All the fields are mandatory");
     } else {
       try {
-        const data = {
-          service_name: serviceName,
-        };
-        const res = await postData(`${apiUrl.ADD_SERVICE}`, data);
-        if (res) {
+        const formData = new FormData();
+        formData.append("banner_image", bannerImage);
+        formData.append("price", price);
+        formData.append("category", selectedCategory);
+        formData.append("service_name", serviceName);
+
+        const res = await axios.post(
+          `${apiUrl.BASEURL}${apiUrl.ADD_TECHNICIAN}`,
+          formData
+        );
+        if (res.status === 200) {
           alert("Added");
-          console.log("res", res);
-          setServiceName("");
+          window.location.reload();
           fetchList();
         }
       } catch (error) {
@@ -121,10 +129,10 @@ function AddService() {
   const deleteService = async (id) => {
     try {
       const res = await axios.delete(
-        `${apiUrl.BASEURL}${apiUrl.DELETE_SERVICE}/${id}`
+        `${apiUrl.BASEURL}${apiUrl.DELETE_TECHNICIAN}${id}`
       );
       if (res.status === 200) {
-        // alert("Service Deleted");
+        alert("Deleted");
         fetchList();
       }
     } catch (error) {
@@ -207,13 +215,30 @@ function AddService() {
       sortable: true,
     },
     {
-      name: "Status",
+      name: "Banner",
       selector: (row) => (
-        <Badge className="ms-2" bg={row.isActive ? "success" : "danger"}>
-          {row.isActive ? "Active" : "Inactive"}
-        </Badge>
+        <img src={row.banner_image} style={{ width: "50px", height: "50px" }} />
       ),
+      sortable: true,
     },
+    {
+      name: "Category",
+      selector: (row) => row.category,
+      sortable: true,
+    },
+    {
+      name: "Price",
+      selector: (row) => row.price,
+      sortable: true,
+    },
+    // {
+    //   name: "Status",
+    //   selector: (row) => (
+    //     <Badge className="ms-2" bg={row.isActive ? "success" : "danger"}>
+    //       {row.isActive ? "Active" : "Inactive"}
+    //     </Badge>
+    //   ),
+    // },
     {
       name: "Action",
       selector: (row) => (
@@ -223,7 +248,7 @@ function AddService() {
               display: "flex",
             }}
           >
-            <Switch
+            {/* <Switch
               onChange={() => toggleServiceStatus(row._id, row.isActive)}
               checked={row.isActive}
               onColor="#080"
@@ -236,7 +261,7 @@ function AddService() {
               height={15}
               width={25}
             />{" "}
-            /{" "}
+            /{" "} */}
             <div
               style={{ cursor: "pointer" }}
               title="Delete"
@@ -251,8 +276,8 @@ function AddService() {
     },
   ];
 
-  const filteredServiceListData = serviceListData
-    .filter((service) => {
+  const filteredallTech = allTech
+    ?.filter((service) => {
       // Apply search filter
       if (searchServive) {
         return service.service_name
@@ -270,7 +295,7 @@ function AddService() {
     });
 
   const downloadDataset = () => {
-    const dataToDownload = filteredServiceListData.map((item) => ({
+    const dataToDownload = filteredallTech.map((item) => ({
       service_name: item.service_name,
       status: item.isActive ? "Active" : "Inactive",
     }));
@@ -281,7 +306,31 @@ function AddService() {
     XLSX.writeFile(workbook, "service-list.xlsx");
   };
 
-  console.log("filteredServiceListData", filteredServiceListData);
+  console.log("filteredallTech", filteredallTech);
+
+  // const [timer, setTimer] = useState(30);
+  // const [isRunning, setIsRunning] = useState(false);
+
+  // const handleTime = () => {
+  //   if (!isRunning) {
+  //     setIsRunning(true);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   let interval;
+
+  //   if (isRunning && timer > 0) {
+  //     interval = setInterval(() => {
+  //       setTimer((prevTimer) => prevTimer - 1);
+  //     }, 1000);
+  //   } else if (timer === 0) {
+  //     clearInterval(interval);
+  //     setIsRunning(false);
+  //   }
+
+  //   return () => clearInterval(interval);
+  // }, [isRunning, timer]);
 
   return (
     <div>
@@ -298,59 +347,68 @@ function AddService() {
             }}
           >
             <div className="p-2">
-              <div>
-                <h6 className="mt-3" style={styles.header}>
-                  Service Name:
-                </h6>
+              <div className="row">
+                <div className="col-md-6">
+                  <h6 className="mt-3" style={styles.header}>
+                    Select Category<span style={{ color: "red" }}>*</span>
+                  </h6>
 
-                <input
-                  type="text"
-                  value={serviceName}
-                  placeholder="e.g. Catering Service"
-                  onChange={(e) => setServiceName(e.target.value)}
-                  style={{ fontSize: "14px", padding: "4px 7px" }}
-                />
+                  <select
+                    style={{ padding: "4px 7px", fontSize: "14px" }}
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    <option value="">---Select Category---</option>
+                    <option value="Sound">Sound</option>
+                    <option value="Lighting">Lighting</option>
+                    <option value="Video">Video</option>
+                    <option value="Fabrication">Fabrication</option>
+                    <option value="Genset">Genset</option>
+                    <option value="Shamiana">Shamiana</option>
+                  </select>
+                </div>
+                <div className="col-md-6">
+                  <h6 className="mt-3" style={styles.header}>
+                    Service Name<span style={{ color: "red" }}>*</span>
+                  </h6>
+
+                  <input
+                    type="text"
+                    value={serviceName}
+                    placeholder="e.g. Sound Engineer"
+                    onChange={(e) => setServiceName(e.target.value)}
+                    style={{ fontSize: "14px", padding: "4px 7px" }}
+                  />
+                </div>
+                <div className="col-md-6">
+                  <h6 className="mt-3" style={styles.header}>
+                    Price/day<span style={{ color: "red" }}>*</span>
+                  </h6>
+
+                  <input
+                    type="number"
+                    value={price}
+                    min={1}
+                    placeholder="1"
+                    onChange={(e) => setPrice(e.target.value)}
+                    style={{ fontSize: "14px", padding: "4px 7px" }}
+                  />
+                </div>
+                <div className="col-md-6">
+                  <h6 className="mt-3" style={styles.header}>
+                    Banner Image<span style={{ color: "red" }}>*</span>
+                  </h6>
+
+                  <input
+                    type="file"
+                    accept="image/png"
+                    onChange={(e) => setBannerImage(e.target.files[0])}
+                    style={{ fontSize: "14px", padding: "4px 7px" }}
+                  />
+                </div>
               </div>
-              {/* <div>
-                <h6 className="mt-3" style={styles.header}>
-                  Service Image:
-                </h6>
-
-                <input
-                  type="file"
-                  accept="image/png"
-                  placeholder="e.g. Catering Service"
-                  onChange={(e) => setServiceImage(e.target.files[0])}
-                  style={{ fontSize: "14px", padding: "4px 7px" }}
-                />
-              </div> */}
               <div className="mt-3 mb-2">
                 <button onClick={addService} style={styles.buttonForEveything}>
-                  Add Service
-                </button>
-              </div>
-              <div
-                style={{
-                  borderBottom: "1px solid #f4f4f4",
-                }}
-              ></div>
-              <p className="mt-1" style={{ fontSize: "12px", color: "blue" }}>
-                <b>*Add multiple services through excel</b>
-              </p>
-              <div className="mb-2 d-flex">
-                <button
-                  className="me-2"
-                  onClick={downloadExcel}
-                  style={styles.buttonForEveything}
-                >
-                  Download excel
-                </button>
-                <input
-                  type="file"
-                  placeholder="Upload file"
-                  onChange={uploadFile}
-                />
-                <button onClick={addExcel} style={styles.buttonForEveything}>
                   Add
                 </button>
               </div>
@@ -390,7 +448,7 @@ function AddService() {
                       }}
                       onChange={(e) => setSearchServive(e.target.value)}
                     />{" "}
-                    <select
+                    {/* <select
                       style={{
                         border: "1px solid #ebedf2",
                         padding: "2px 5px",
@@ -402,7 +460,7 @@ function AddService() {
                       <option value="">Filter</option>
                       <option value="true">Active</option>
                       <option value="false">Inactive</option>
-                    </select>{" "}
+                    </select>{" "} */}
                     <FaDownload
                       onClick={downloadDataset}
                       className="ms-2 me-2"
@@ -416,7 +474,7 @@ function AddService() {
                 <div>
                   <DataTable
                     columns={columns}
-                    data={filteredServiceListData}
+                    data={filteredallTech}
                     pagination
                     //   defaultSortFieldId={1}
                   />
@@ -456,4 +514,4 @@ const styles = {
   },
 };
 
-export default AddService;
+export default Technicians;

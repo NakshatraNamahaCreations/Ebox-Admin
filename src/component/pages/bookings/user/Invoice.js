@@ -1,20 +1,75 @@
 import moment from "moment";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
+import { apiUrl } from "../../../../api-services/apiContents";
+import axios from "axios";
+import Loader from "../../../loader/Loader";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 // import { invoiceData } from "../../../../global-data/booking";
 
 function Invoice() {
   let location = useLocation();
   let invoice = location.state?.invoice || null;
   let user = location.state?.userData || null;
+  const [profileData, setProfileData] = useState({});
+  const [payoutData, setPayoutData] = useState({});
+  const [allAddress, setAllAddress] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   console.log("invoice=====", invoice);
-  console.log("user=====", user);
+  // console.log("user=====", user);
 
   const bookingId = invoice._id?.slice(-4);
   const userId = user._id?.slice(-4);
   const invoiceNumber = String(userId + bookingId);
-  console.log("invoiceNumber", invoiceNumber);
+  // console.log("invoiceNumber", invoiceNumber);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const profileRes = await axios.get(
+        `${apiUrl.BASEURL}${apiUrl.GET_PROFILE}`
+      );
+      if (profileRes.status === 200) {
+        const profile = profileRes.data.profile;
+        setProfileData(profile);
+      }
+      const payoutRes = await axios.get(
+        `${apiUrl.BASEURL}${apiUrl.GET_PAYOUT_CONFIG}`
+      );
+      if (payoutRes.status === 200) {
+        const payout = payoutRes.data.profile;
+        setPayoutData(payout);
+      }
+      const addressRes = await axios.get(
+        `${apiUrl.BASEURL}${apiUrl.GET_ADDRESS}`
+      );
+      if (addressRes.status === 200) {
+        setAllAddress(addressRes.data.data.reverse());
+      }
+    } catch (error) {
+      console.error("Failed to fetch teams:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  console.log("allAddress", allAddress);
+
+  const eventState = invoice?.event_location
+    ?.split(",")
+    .slice(-2, -1)[0]
+    .trim();
+  const branchAddress = allAddress?.find(
+    (ele) => ele.state_name === eventState
+  );
+  console.log("branchAddress", branchAddress);
 
   const invoiceInfo = [
     {
@@ -45,8 +100,13 @@ function Invoice() {
     },
     {
       id: 6,
-      head: "Event Date/Time",
-      value: `${invoice.event_date}/${invoice.event_start_time}`,
+      head: "Event Date",
+      value: `${invoice.event_date}`,
+    },
+    {
+      id: 6,
+      head: "Event Time",
+      value: `${invoice.event_start_time} - ${invoice.event_end_time}`,
     },
     {
       id: 7,
@@ -84,6 +144,24 @@ function Invoice() {
     },
   ];
 
+  {
+    isLoading && <Loader />;
+  }
+
+  const downloadPDF = () => {
+    const invoiceElement = document.getElementById("invoiceContent");
+
+    html2canvas(invoiceElement, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save("invoice.pdf");
+    });
+  };
+
   return (
     <>
       <div className="mb-2">
@@ -95,14 +173,13 @@ function Invoice() {
             fontSize: "14px",
             cursor: "pointer",
             backgroundColor: "#2F4E9E",
-            padding: "0px 5px",
+            padding: "3px 5px",
             borderRadius: "3px",
-            // border: "1px solid #8080802b",
-            // borderColor: "gray",
+            border: 0,
           }}
-          onClick={() => window.print()}
+          onClick={downloadPDF}
         >
-          <i className="fa-solid fa-print"></i> Print
+          Download PDF
         </button>
       </div>
 
@@ -115,22 +192,24 @@ function Invoice() {
           padding: "10px",
         }}
       >
-        <div
-          className="row"
-          style={{ alignItems: "center", justifyContent: "center" }}
-        >
+        <div className="row" style={{ alignItems: "center" }}>
           <div className="col-md-6">
-            <h4>Nithya Event</h4>
+            <h4>KADAGAM VENTURES PRIVATE LIMITED </h4>
           </div>
           <div className="col-md-6">
-            <div className="text-end">34 & 35, Venkatappa Road,</div>
-            <div className="text-end">Taskar Town, Off. Queen Road,</div>
-            <div className="text-end">Bangalore -560 051,</div>
-            <div className="text-end">support@nithyaevent.com</div>
+            <div className="text-end">
+              <b>Corporate Address</b>{" "}
+            </div>
+            <div className="text-end">{profileData.corporate_address}</div>
+            <div className="text-end">{profileData.contact_email}</div>
           </div>
         </div>
         <div className="row mt-2">
           <div className="col-md-6 col-sm-4">
+            <div className="text-start">
+              <b>Branch Address</b>
+            </div>
+            <div className="text-start">{branchAddress?.address}</div>
             <div className="text-start">
               <b>To:</b>{" "}
             </div>
@@ -151,10 +230,10 @@ function Invoice() {
           {/* <div className="col-md-4"></div> */}
           <div className="col-md-6 col-sm-8">
             <div className="text-end">
-              <b>TEC GSTIN: 29AADPI4078B1ZW</b>{" "}
+              <b>GSTIN: {payoutData.company_gst}</b>{" "}
             </div>
             <div className="text-end">
-              <b>SAC CODE: 998387</b>{" "}
+              <b>SAC CODE: {payoutData.company_saccode}</b>{" "}
             </div>
             <div style={{ border: "1px solid black" }}>
               {invoiceInfo.map((ele, index) => (
@@ -272,11 +351,11 @@ function Invoice() {
               ))}
             </tbody>
           </Table>
-          <div className="mt-3">
+          {/* <div className="mt-3">
             <div>
               <b>Terms & Conditions</b>{" "}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

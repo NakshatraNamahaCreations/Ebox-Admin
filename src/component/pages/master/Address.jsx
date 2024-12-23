@@ -17,6 +17,7 @@ function Address() {
   const [cityName, setCityName] = useState("");
   const [selectedCityId, setSelectedCityId] = useState("");
   const [contactEmail, setContactEmail] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
   const [address, setAddress] = useState("");
   const [searchName, setSearchName] = useState("");
   const [cityListData, setCityListData] = useState([]);
@@ -111,6 +112,7 @@ function Address() {
           state_name: stateName,
           address: address,
           contact_email: contactEmail,
+          contact_phone: contactPhone,
         };
         const res = await postData(`${apiUrl.ADD_ADDRESS}`, data);
         if (res) {
@@ -170,28 +172,24 @@ function Address() {
     //   name: "Sl.No",
     //   selector: (row, index) => index + 1,
     // },
-
     {
       name: "State",
       selector: (row) => row.state_name,
-      sortable: true,
     },
     {
       name: "City",
       selector: (row) => row.city_name,
-      sortable: true,
     },
     {
       name: "Address",
       selector: (row) => row.address,
-      sortable: true,
     },
     {
       name: "Action",
       selector: (row) => (
         <>
           <div style={{ display: "flex" }}>
-            <div
+            {/* <div
               style={{
                 backgroundColor: "#ffa534",
                 padding: "7px 4px",
@@ -200,7 +198,7 @@ function Address() {
               title="Edit"
             >
               <MdEdit size={16} color="white" />
-            </div>
+            </div> */}
             <div
               style={{
                 backgroundColor: row.isAddressActive ? "#35cd3a" : "#2f4e9e",
@@ -375,6 +373,21 @@ function Address() {
             <div className="row mt-2">
               <div className="col-md-4">
                 <label className="form-label">
+                  Contact Phone <span style={{ color: "red" }}>*</span>
+                </label>
+              </div>
+              <div className="col-md-8">
+                <input
+                  style={styles.borderItems}
+                  onChange={(e) => setContactPhone(e.target.value)}
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div className="row mt-2">
+              <div className="col-md-4">
+                <label className="form-label">
                   Address <span style={{ color: "red" }}>*</span>
                 </label>
               </div>
@@ -397,7 +410,7 @@ function Address() {
 
 const styles = {
   buttonForEveything: {
-    backgroundColor: "#90e447",
+    backgroundColor: "#609ecc",
     border: "#7ac536",
     color: "white",
     borderRadius: "3px",

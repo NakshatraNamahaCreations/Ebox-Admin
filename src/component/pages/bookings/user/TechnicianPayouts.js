@@ -16,7 +16,7 @@ import { get } from "../../../../api-services/apiHelper";
 // import styles from "./payout.module.css";
 import * as XLSX from "xlsx";
 
-function Payouts() {
+function TechnicianPayouts() {
   const Navigate = useNavigate();
   const [userBookingData, setUserBookingData] = useState([]);
   const [payoutData, setPayoutData] = useState([]);
@@ -46,7 +46,8 @@ function Payouts() {
         setVendors(data.data.reverse());
 
         const payoutRes = await axios.get(
-          `${apiUrl.BASEURL}${apiUrl.GET_ALL_PAYOUTS}`
+          `${apiUrl.BASEURL}${apiUrl.GET_ALL_TECH_PAYOUTS}`
+          // `http://localhost:9000/api${apiUrl.GET_ALL_TECH_PAYOUTS}`
         );
         if (payoutRes.status === 200) {
           setPayoutData(payoutRes.data.data);
@@ -64,26 +65,24 @@ function Payouts() {
     setShowModal(true);
     setRowData(row);
   };
-  // console.log("vrndr", vendors);
 
   const calculateTotalBySeller = (data) => {
     return data.map((event) => {
-      const sellerMap = event.product_data.reduce((acc, product) => {
-        if (!acc[product.sellerId]) {
-          acc[product.sellerId] = {
-            event_name: event.event_name,
-            // ...product,
-            event_id: event._id,
+      const sellerMap = event.tech_data.reduce((acc, product) => {
+        if (!acc[product.vendor_id]) {
+          acc[product.vendor_id] = {
+            event_name: event.service_name,
+            event_id: event._id, //add event id
             ordered_date: event.ordered_date,
-            seller_id: product.sellerId,
-            seller_name: product.sellerName,
+            seller_id: product.vendor_id,
+            seller_name: product.vendor_name,
             commission_percentage: product.commissionPercentage,
             commission_tax: product.commissionTax,
-            store: product.store,
+            store: product.shop_name,
             payment_amount: 0,
           };
         }
-        acc[product.sellerId].payment_amount += product.totalPrice;
+        acc[product.vendor_id].payment_amount += product.totalPrice;
         return acc;
       }, {});
       const groupedSellers = Object.values(sellerMap);
@@ -97,13 +96,14 @@ function Payouts() {
   const paymentSellers = calculateTotalBySeller(userBookingData).flatMap(
     (ele) => ele.sellers
   );
+  // console.log("tech_data", tech_data);
 
-  console.log(
-    "userBookingData",
-    userBookingData.flatMap((ele) => ele.product_data)
-  );
+  // console.log(
+  //   "userBookingData",
+  //   userBookingData.flatMap((ele) => ele.tech_data)
+  // );
 
-  // console.log("paymentSellers", paymentSellers);
+  console.log("paymentSellers", paymentSellers);
   // console.log("payoutData", payoutData);
 
   const payoutSellers = paymentSellers.map((seller) => {
@@ -142,9 +142,9 @@ function Payouts() {
 
     return {
       ...row,
-      commission_amount: parseFloat(commissionPercentage?.toFixed(2)) || 0,
-      tax_amount: parseFloat(commissionTax?.toFixed(2)) || 0,
-      payout_amount: parseFloat(totalDeduction?.toFixed(2)) || 0,
+      commission_amount: parseFloat(commissionPercentage?.toFixed(2)),
+      tax_amount: parseFloat(commissionTax?.toFixed(2)),
+      payout_amount: parseFloat(totalDeduction?.toFixed(2)),
     };
   });
   // console.log("processedRows", processedRows);
@@ -190,7 +190,6 @@ function Payouts() {
     setOrderFromDate("");
     setOrderToDate("");
   };
-  console.log("filteredRows", filteredRows);
 
   // CALCULATION FOR COMMISSION---------------------
   // OLD ONE- WORKING
@@ -263,7 +262,7 @@ function Payouts() {
     });
   };
   const goDetails = (row) => {
-    Navigate("/payouts-details", {
+    Navigate("/tech-payouts-details", {
       state: {
         details: row,
       },
@@ -382,7 +381,7 @@ function Payouts() {
       name: "Event",
       selector: (row) => (
         <div>
-          <div>Ord.ID: #{row.event_id?.slice(-6)?.toUpperCase()}</div>
+          <div>Ord.ID: #{row.event_id?.slice(-6).toUpperCase()}</div>
           <div>{row.event_name}</div>
         </div>
       ),
@@ -526,7 +525,7 @@ function Payouts() {
     const worksheet = XLSX.utils.json_to_sheet(dataToDownload);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Product");
-    XLSX.writeFile(workbook, "payout-reports-product.xlsx");
+    XLSX.writeFile(workbook, "payout-reports-technician.xlsx");
   };
 
   return (
@@ -538,7 +537,7 @@ function Payouts() {
           className="headerTitle-0-1-70 row p-3"
           style={{ borderBottom: "1px solid #f4f9fd" }}
         >
-          <div className="col-md-8">Product Payouts</div>
+          <div className="col-md-8">Technician Payouts</div>
           <div className="col-md-4 row">
             <Button
               variant="outline-success"
@@ -894,4 +893,4 @@ const inlineStyles = {
   },
 };
 
-export default Payouts;
+export default TechnicianPayouts;

@@ -5,15 +5,17 @@ import moment from "moment";
 // import VendorProductList from "./VendorProductList";
 import axios from "axios";
 import Switch from "react-switch";
-import { Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 
 function VendorDetails() {
   const location = useLocation();
   const vendor = location.state.vendor;
+  const [showModal, setShowModal] = useState(false);
+  const [reason, setReason] = useState("");
   const [commission, setCommission] = useState(
     vendor.commission_percentage || ""
   );
-  // console.log("vendor details in cendor det>>", vendor);
+  console.log("vendor details in cendor det>>", vendor);
 
   const makeVendorApproval = async () => {
     try {
@@ -30,30 +32,49 @@ function VendorDetails() {
     }
   };
 
+  const openPop = () => setShowModal(true);
+
   const makeVendorDisapproval = async () => {
     try {
+      if (!reason) {
+        alert("Please provide a reason for disapproval.");
+        return;
+      }
       const res = await axios.put(
-        `${apiUrl.BASEURL}${apiUrl.VENDOR_DISAPPROVE}${vendor._id}`
+        `${apiUrl.BASEURL}${apiUrl.VENDOR_DISAPPROVE}${vendor._id}`,
+        {
+          reason_for_disapprove: reason,
+        }
       );
+
       if (res.status === 200) {
         console.log(res.data);
-        alert("Disapproved Successfully");
+        alert("Vendor is disapproved");
         window.location.assign("/vendor-list");
       }
     } catch (error) {
-      console.error("Error:", error);
+      if (error.response) {
+        // Backend returned an error response
+        console.error("Error Response:", error.response.data);
+        alert(error.response.data.message || "Failed to disapprove vendor");
+      } else {
+        // Network error or other issues
+        console.error("Error:", error);
+        alert("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
   const toggleServiceStatus = async (id, currentStatus) => {
     try {
-      const res = await axios.patch(
-        `${apiUrl.BASEURL}${apiUrl.UPDATE_SERVICE_STATUS}/${id}`,
+      const res = await axios.put(
+        `${apiUrl.BASEURL}${apiUrl.UPDATE_VENDOR_STATUS}${id}`,
         {
           isActive: !currentStatus, // Toggle the current status
         }
       );
       if (res.status === 200) {
+        alert(`Vendor is ${currentStatus ? "Inactivated" : "Activated"}`);
         window.location.assign("/vendor-list");
         // fetchVendors(); // Refresh the service list
       }
@@ -106,77 +127,47 @@ function VendorDetails() {
               Status:{" "}
               <span
                 style={{
-                  color: vendor.is_approved === true ? "#35d482" : "red",
+                  color: vendor.is_approved ? "#35d482" : "red",
                   // fontSize: "20px",
                 }}
               >
                 {" "}
-                {vendor.is_approved === true ? "Approved" : "Not Approved"}{" "}
+                {vendor.is_approved ? "Approved" : "Disapproved"}{" "}
               </span>{" "}
             </lable>
             <br />
-            <lable style={styles.lable}>
-              Action:{" "}
-              <span
-                style={{
-                  color: vendor.isActive === true ? "#35d482" : "red",
-                  // fontSize: "20px",
-                }}
-              >
-                {vendor.isActive === true ? "Active" : "In Active"}{" "}
-              </span>{" "}
-              <span>
-                <Switch
-                  className="mt-2"
-                  onChange={() =>
-                    toggleServiceStatus(vendor._id, vendor.isActive)
-                  }
-                  checked={vendor.isActive}
-                  onColor="#080"
-                  offHandleColor="#ddd"
-                  onHandleColor="#ddd"
-                  offColor="#888"
-                  handleDiameter={20}
-                  uncheckedIcon={false}
-                  checkedIcon={false}
-                  height={15}
-                  width={35}
-                />
-              </span>
-            </lable>
+            {vendor.is_approved && (
+              <lable style={styles.lable}>
+                Action:{" "}
+                <span
+                  style={{
+                    color: vendor.isActive ? "#35d482" : "red",
+                    // fontSize: "20px",
+                  }}
+                >
+                  {vendor.isActive ? "Active" : "In Active"}{" "}
+                </span>{" "}
+                <span>
+                  <Switch
+                    className="mt-2"
+                    onChange={() =>
+                      toggleServiceStatus(vendor._id, vendor.isActive)
+                    }
+                    checked={vendor.isActive}
+                    onColor="#080"
+                    offHandleColor="#ddd"
+                    onHandleColor="#ddd"
+                    offColor="#888"
+                    handleDiameter={20}
+                    uncheckedIcon={false}
+                    checkedIcon={false}
+                    height={15}
+                    width={35}
+                  />
+                </span>
+              </lable>
+            )}
             <br />
-            <div className="mt-2">
-              {vendor.is_approved === false && (
-                <button
-                  style={{
-                    border: 0,
-                    fontSize: "14px",
-                    backgroundColor: "#ff005d",
-                    color: "white",
-                    borderRadius: "7px",
-                    boxShadow: "0px 1px 3px 0px #5d5d5d",
-                  }}
-                  onClick={makeVendorApproval}
-                >
-                  Approve
-                </button>
-              )}
-              {/* {vendor.is_approved === true && (
-                <button
-                  style={{
-                    border: 0,
-                    fontSize: "14px",
-                    backgroundColor: "#ff005d",
-                    color: "white",
-                    borderRadius: "7px",
-                    boxShadow: "0px 1px 3px 0px #5d5d5d",
-                  }}
-                  onClick={makeVendorDisapproval}
-                >
-                  Disapprove
-                </button>
-              )} */}
-            </div>
           </div>
           <div className="row">
             <div className="col-md-3 mb-3">
@@ -404,8 +395,77 @@ function VendorDetails() {
             vendorID={vendor._id}
             vendorName={vendor.vendor_name}
           /> */}
+          <div className="mt-2">
+            {vendor.is_approved === false && (
+              <Button
+                style={{
+                  border: 0,
+                  fontSize: "14px",
+                  backgroundColor: "#00968b",
+                  color: "white",
+                  borderRadius: "7px",
+                  boxShadow: "0px 1px 3px 0px #5d5d5d",
+                }}
+                onClick={makeVendorApproval}
+              >
+                Approve
+              </Button>
+            )}
+            {vendor.is_approved && (
+              <Button
+                style={{
+                  border: 0,
+                  fontSize: "14px",
+                  backgroundColor: "#ff005d",
+                  color: "white",
+                  borderRadius: "7px",
+                  boxShadow: "0px 1px 3px 0px #5d5d5d",
+                }}
+                onClick={openPop}
+              >
+                Disapprove
+              </Button>
+            )}
+          </div>
         </div>
       </div>
+      <Modal
+        size="sm"
+        centered
+        onHide={() => setShowModal(false)}
+        show={showModal}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Disapprove Vendor</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            Reason for disapproval
+            <span style={{ color: "Red" }}> *</span>
+            <textarea
+              className="input-0-1-134 my-2 input-d21-0-1-1124 undefined"
+              type="text"
+              style={{ borderRadius: "7px" }}
+              onChange={(e) => setReason(e.target.value)}
+            />{" "}
+            <Button
+              style={{
+                border: 0,
+                fontSize: "14px",
+                backgroundColor: "#ff005d",
+                color: "white",
+                borderRadius: "7px",
+                boxShadow: "0px 1px 3px 0px #5d5d5d",
+              }}
+              onClick={makeVendorDisapproval}
+            >
+              Disapprove
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

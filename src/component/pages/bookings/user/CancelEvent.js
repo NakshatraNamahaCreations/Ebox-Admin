@@ -1,32 +1,28 @@
 import React, { useEffect, useState } from "react";
+import Header from "../../../structure/Header";
 import DataTable from "react-data-table-component";
-import "../../../../styles/booking-history.css";
+import axios from "axios";
+import { apiUrl } from "../../../../api-services/apiContents";
 import { FaEye } from "react-icons/fa";
-// import { RxSlash } from "react-icons/rx";
-// import { MdDelete } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
-// import { scheduleData } from "../../../../global-data/booking";
 import moment from "moment";
 import Loader from "../../../loader/Loader";
-import { apiUrl } from "../../../../api-services/apiContents";
-import axios from "axios";
 
-function BookingHistory() {
-  const { date } = useParams();
-  console.log("date", date);
+function CancelEvent() {
   const Navigate = useNavigate();
-  const [scheduleData, setScheduleData] = useState([]);
+  const [cancelOrders, setCancelOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchList = async () => {
     setIsLoading(true);
     try {
-      const serviceRes = await axios.get(
-        `${apiUrl.BASEURL}${apiUrl.GET_ALL_ORDER}`
+      const severRes = await axios.get(
+        `${apiUrl.BASEURL}${apiUrl.CANCEL_EVENTS}`
       );
-      if (serviceRes.status === 200) {
-        // console.log("serviceRes", serviceRes);
-        setScheduleData(serviceRes.data);
+      if (severRes.status === 200) {
+        console.log("severRes", severRes.data.cancelEvents);
+
+        setCancelOrders(severRes.data.cancelEvents);
       }
     } catch (error) {
       console.error("Failed to fetch list:", error);
@@ -39,9 +35,6 @@ function BookingHistory() {
     fetchList();
   }, []);
 
-  const bookingData = scheduleData.filter(
-    (item) => moment(item.createdAt).format("YYYY-MM-DD") === date
-  );
   const navigateToDetailedPage = (row) => {
     Navigate("/booking/booking-details", {
       state: {
@@ -49,6 +42,7 @@ function BookingHistory() {
       },
     });
   };
+
   const columns = [
     {
       name: "Booking No",
@@ -96,11 +90,7 @@ function BookingHistory() {
       ),
       sortable: true,
     },
-    {
-      name: "Status",
-      selector: (row) => row.order_status,
-      sortable: true,
-    },
+
     {
       name: "Action",
       selector: (row) => (
@@ -116,37 +106,41 @@ function BookingHistory() {
               &nbsp;View
             </div>
             {/* <div>
-              <RxSlash size={16} />
-            </div>
-            <div style={{ cursor: "pointer" }} title="Delete">
-              <MdDelete size={16} color="#E91E63" />
-              &nbsp;Delete
-            </div> */}
+                  <RxSlash size={16} />
+                </div>
+                <div style={{ cursor: "pointer" }} title="Delete">
+                  <MdDelete size={16} color="#E91E63" />
+                  &nbsp;Delete
+                </div> */}
           </div>
         </>
       ),
       // sortable: true,
     },
   ];
-  console.log("bookingData", bookingData);
 
   return (
-    <div>
+    <>
       {isLoading && <Loader />}
-      <div>
-        <div className="headerTitle-0-1-70">
-          Payment History of {moment(date).format("DD/MM/YYYY")}
+      <div
+        className="border-top-for-all-border p-2"
+        style={{
+          backgroundColor: "white",
+          borderRadius: "5px",
+        }}
+      >
+        <Header />
+        <div>
+          <DataTable
+            columns={columns}
+            data={cancelOrders}
+            pagination
+            //   defaultSortFieldId={1}
+          />
         </div>
-        <br />
       </div>
-
-      <DataTable
-        columns={columns}
-        data={bookingData}
-        //   defaultSortFieldId={1}
-      />
-    </div>
+    </>
   );
 }
 
-export default BookingHistory;
+export default CancelEvent;

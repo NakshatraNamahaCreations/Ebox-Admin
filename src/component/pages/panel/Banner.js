@@ -3,9 +3,9 @@ import DataTable from "react-data-table-component";
 // import { FaEye } from "react-icons/fa";
 // import { RxSlash } from "react-icons/rx";
 import { MdDelete } from "react-icons/md";
-import { bannerData } from "../../../global-data/booking";
 import axios from "axios";
 import { apiUrl } from "../../../api-services/apiContents";
+import Loader from "../../loader/Loader";
 
 function Banner() {
   const [bannerImages, setBannerImages] = useState("");
@@ -83,7 +83,6 @@ function Banner() {
     {
       name: "Sl.No",
       selector: (row, index) => index + 1,
-      sortable: true,
     },
     {
       name: "Image",
@@ -95,14 +94,13 @@ function Banner() {
             }}
           >
             <img
-              src={`${apiUrl.IMAGEURL}public/banners/${row.banner_image}`}
+              src={row.banner_image}
               alt=""
               style={{ width: "100%", height: "80px", borderRadius: "10px" }}
             />
           </div>
         </>
       ),
-      sortable: true,
     },
     {
       name: "Action",
@@ -119,6 +117,10 @@ function Banner() {
       ),
     },
   ];
+
+  {
+    isLoading && <Loader />;
+  }
 
   return (
     <div className="row mt-2">
@@ -204,7 +206,7 @@ const styles = {
     border: "1px solid #ccc",
   },
   buttonForEveything: {
-    backgroundColor: "#90e447",
+    backgroundColor: "#609ecc",
     border: "#7ac536",
     color: "white",
     borderRadius: "3px",

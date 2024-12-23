@@ -8,6 +8,9 @@ import axios from "axios";
 import { postData } from "../../../api-services/apiHelper";
 import Loader from "../../loader/Loader";
 import * as XLSX from "xlsx";
+import Switch from "react-switch";
+import { Badge } from "react-bootstrap";
+import { FaDownload } from "react-icons/fa6";
 
 function AddSubService() {
   const [serviceName, setServiceName] = useState("");
@@ -17,12 +20,14 @@ function AddSubService() {
   const [subServiceListData, setSubServiceListData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [file, setFile] = useState(null);
+  const [searchServive, setSearchServive] = useState("");
+  const [statusType, setStatusType] = useState("");
 
   const fetchList = async () => {
     setIsLoading(true);
     try {
       const serviceRes = await axios.get(
-        `${apiUrl.BASEURL}${apiUrl.GET_ALL_SERVICE}`
+        `${apiUrl.BASEURL}${apiUrl.GET_ACTIVE_SERVICE}`
       );
       if (serviceRes.status === 200) {
         setServiceListData(serviceRes.data.data);
@@ -30,7 +35,7 @@ function AddSubService() {
       const subServiceRes = await axios.get(
         `${apiUrl.BASEURL}${apiUrl.GET_ALL_SUB_SERVICE}`
       );
-      if (serviceRes.status === 200) {
+      if (subServiceRes.status === 200) {
         setSubServiceListData(subServiceRes.data.data);
       }
     } catch (error) {
@@ -75,6 +80,24 @@ function AddSubService() {
       }
     }
   };
+
+  const toggleServiceStatus = async (id, currentStatus) => {
+    try {
+      const res = await axios.put(
+        `${apiUrl.BASEURL}${apiUrl.UPDATE_SUB_SERVICE_STATUS}${id}`,
+        {
+          isActive: !currentStatus, // Toggle the current status
+        }
+      );
+      if (res.status === 200) {
+        fetchList(); // Refresh the service list
+        alert(res.data.message || "Status updated!");
+      }
+    } catch (error) {
+      console.error("Error updating the status:", error);
+    }
+  };
+
   const deleteService = async (id) => {
     try {
       const res = await axios.delete(
@@ -141,10 +164,10 @@ function AddSubService() {
   // };
 
   const columns = [
-    {
-      name: "Sl.No",
-      selector: (row, index) => index + 1,
-    },
+    // {
+    //   name: "Sl.No",
+    //   selector: (row, index) => index + 1,
+    // },
 
     {
       name: "Service Name",
@@ -157,6 +180,14 @@ function AddSubService() {
       sortable: true,
     },
     {
+      name: "Status",
+      selector: (row) => (
+        <Badge className="ms-2" bg={row.isActive ? "success" : "danger"}>
+          {row.isActive ? "Active" : "Inactive"}
+        </Badge>
+      ),
+    },
+    {
       name: "Action",
       selector: (row) => (
         <>
@@ -164,20 +195,27 @@ function AddSubService() {
             style={{
               display: "flex",
             }}
-            // onClick={() => navigateToDetailedPage(row)}
           >
-            {/* <div style={{ cursor: "pointer" }} title="View">
-              <FaEye size={16} color="#00ade7" />
-            </div>
-            <div>
-              <RxSlash size={16} />
-            </div> */}
+            <Switch
+              onChange={() => toggleServiceStatus(row._id, row.isActive)}
+              checked={row.isActive}
+              onColor="#080"
+              offHandleColor="#ddd"
+              onHandleColor="#ddd"
+              offColor="#888"
+              handleDiameter={15}
+              uncheckedIcon={false}
+              checkedIcon={false}
+              height={15}
+              width={25}
+            />{" "}
+            /{" "}
             <div
               style={{ cursor: "pointer" }}
               title="Delete"
               onClick={() => deleteService(row._id)}
             >
-              <MdDelete size={16} color="#E91E63" />
+              <MdDelete size={20} color="#E91E63" />
             </div>
           </div>
         </>
@@ -185,6 +223,35 @@ function AddSubService() {
       // sortable: true,
     },
   ];
+
+  const filteredServiceListData = subServiceListData
+    .filter((service) => {
+      if (searchServive) {
+        return service.sub_service_name
+          .toLowerCase()
+          .includes(searchServive.toLowerCase());
+      }
+      return true;
+    })
+    .filter((item) => {
+      if (statusType === "") {
+        return true;
+      }
+      return item.isActive === (statusType === "true");
+    });
+
+  const downloadDataset = () => {
+    const dataToDownload = filteredServiceListData.map((item) => ({
+      service_name: item.service_name,
+      subcategory_name: item.sub_service_name,
+      status: item.isActive ? "Active" : "Inactive",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToDownload);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Subcategory-list");
+    XLSX.writeFile(workbook, "subcategory-list.xlsx");
+  };
 
   return (
     <div>
@@ -276,11 +343,55 @@ function AddSubService() {
               }}
             >
               <div className="p-2">
-                <h3 style={styles.itemsHead}>Service List</h3>
+                <div
+                  className="p-3"
+                  style={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    display: "flex",
+                  }}
+                >
+                  <div>
+                    <h3 style={styles.itemsHead}>Subservice List</h3>
+                  </div>
+                  <div style={{ justifyContent: "flex-end" }}>
+                    {/* <b style={{ fontSize: "12px" }}>Search: </b> */}
+                    <input
+                      className="ms-1"
+                      placeholder="Search service"
+                      style={{
+                        border: "1px solid #ebedf2",
+                        padding: "2px 5px",
+                        borderRadius: "5px",
+                      }}
+                      onChange={(e) => setSearchServive(e.target.value)}
+                    />{" "}
+                    <select
+                      style={{
+                        border: "1px solid #ebedf2",
+                        padding: "2px 5px",
+                        borderRadius: "5px",
+                      }}
+                      value={statusType}
+                      onChange={(e) => setStatusType(e.target.value)}
+                    >
+                      <option value="">Filter</option>
+                      <option value="true">Active</option>
+                      <option value="false">Inactive</option>
+                    </select>{" "}
+                    <FaDownload
+                      onClick={downloadDataset}
+                      className="ms-2 me-2"
+                      style={{ cursor: "pointer" }}
+                      size={16}
+                      color="#2F4E9E"
+                    />
+                  </div>
+                </div>
                 <div>
                   <DataTable
                     columns={columns}
-                    data={subServiceListData}
+                    data={filteredServiceListData}
                     pagination
                     //   defaultSortFieldId={1}
                   />
@@ -311,7 +422,7 @@ const styles = {
     border: "1px solid #ccc",
   },
   buttonForEveything: {
-    backgroundColor: "#90e447",
+    backgroundColor: "#609ecc",
     border: "#7ac536",
     color: "white",
     borderRadius: "3px",

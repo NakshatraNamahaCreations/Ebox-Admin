@@ -55,6 +55,7 @@ function Youtube() {
       }
     }
   };
+  console.log("videoList", videoList);
 
   const editFaq = (row) => {
     Navigate("/edit-faq", {
@@ -111,7 +112,6 @@ function Youtube() {
     {
       name: "Sl.No",
       selector: (row, index) => index + 1,
-      sortable: true,
     },
     {
       name: "Video",
@@ -130,8 +130,6 @@ function Youtube() {
           <FaYoutube size={16} color="white" />
         </a>
       ),
-
-      sortable: true,
     },
     {
       name: "Action",
@@ -185,7 +183,6 @@ function Youtube() {
           </div>
         </>
       ),
-      // sortable: true,
     },
   ];
 
@@ -236,7 +233,7 @@ function Youtube() {
 
 const styles = {
   buttonForEveything: {
-    backgroundColor: "#90e447",
+    backgroundColor: "#609ecc",
     border: "#7ac536",
     color: "white",
     borderRadius: "3px",

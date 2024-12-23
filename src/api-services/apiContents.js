@@ -1,28 +1,43 @@
 const apiUrl = {
+  IMAGEURL: "https://api.nithyaevent.com/",
+  BASEURL: "https://api.nithyaevent.com/api",
+
   // IMAGEURL: "http://3.95.141.179:9000/",
   // BASEURL: "http://3.95.141.179:9000/api",
 
-  IMAGEURL: "http://localhost:9000/",
-  BASEURL: "http://localhost:9000/api",
+  // IMAGEURL: "http://localhost:9000/",
+  // BASEURL: "http://localhost:9000/api",
 
-  // LOCALURL: "https://eventbox.nakshatranamahacreations.in/api",
+  // PROFILE
+  ADD_PROFILE: "/company-profile/add-profile",
+  GET_PROFILE: "/company-profile/get-profile",
+  ADD_SOCIAL_MEDIA: "/company-profile/add-social-mediaLink/",
+  // DELETE_LINK: "/company-profile/link",
 
   //PRODUCT
   ADD_PRODUCT: "/product/addproduct",
+  ADD_PRODUCTS_VIA_EXCEL: "/product/add-products-via-excel",
+  ADD_PRODUCT_IMAGES: "/product/add-product-image/",
+
   ALL_PRODUCT: "/product/getallproduct",
   GET_RENTAL_PRODUCTS: "/product/get-rental-product-for-admin",
   GET_SELLING_PRODUCTS: "/product/get-all-sell-product-for-admin",
   GET_PRODUCT_BY_VENDOR: "/product/getvendorproduct/",
   PRODUCT_APPROVE: "/product/product-approved/",
   PRODUCT_DISAPPROVE: "/product/product-disapproved/",
+  DELETE_PRODUCT: "/product/delete-product/",
+  PRODUCT_STATUS_CHANGE: "/product/product-Status/",
 
   // VENDOR
-  // GET_ALL_VENDOR: "/vendor/getallvendor",
+  GET_PRODUCT_VENDOR: "/vendor/get-product-vendor",
   GET_ALL_VENDOR: "/vendor/get-all-vendors-for-admin",
+  GET_APPROVED_VENDOR: "/vendor/get-all-vendors-for-admin",
   VENDOR_APPROVE: "/vendor/vendor-approve/",
   GET_VENDOR_PROFILE: "/vendor/getprofile/",
   VENDOR_DISAPPROVE: "/vendor/vendor-disapprove/",
   ADD_COMMISSION: "/vendor/add-commissions/",
+  UPDATE_VENDOR_STATUS: "/vendor/vendor-Status/",
+  DELETE_VENDOR: "/vendor/delete-vendor/",
 
   // USER
   GET_PARTICULAR_USER: "/user/get-user-profile/",
@@ -37,14 +52,20 @@ const apiUrl = {
   GET_TEAM: "/team/get-user",
   UPDATE_USER: "/team/update-user",
   DELETE_TEAM_USER: "/team/delete-team-user/",
+  ADD_TECHNICIAN: "/technician/add-technician",
+  GET_ALL_TECHNICIAN: "/technician/get-all-technician",
+  DELETE_TECHNICIAN: "/technician/delete_technician/",
 
   // ORDER
   GET_ALL_ORDER: "/user-order/getallorder",
+  CANCEL_EVENTS: "/user-order/get-cancelled-events",
+  RESCHEDULED_EVENTS: "/user-order/get-rescheduled-events",
 
   // SERVICE
   ADD_SERVICE: "/service/add-service",
   ADD_SERVICE_VIA_EXCEL: "/service/add-service-via-excel",
   GET_ALL_SERVICE: "/service/get-all-service",
+  GET_ACTIVE_SERVICE: "/service/get-active-service",
   DELETE_SERVICE: "/service/delete-service",
   ADD_REQUIREMENTS: "/service/add-requirements",
   UPDATE_SERVICE_STATUS: "/service/update-status/",
@@ -52,6 +73,8 @@ const apiUrl = {
   // SUB-SERVICE
   ADD_SUB_SERVICE: "/sub-service/add-sub-service",
   GET_ALL_SUB_SERVICE: "/sub-service/get-all-sub-service",
+  GET_ACTIVE_SUB_SERVICE: "/sub-service/get-active-sub-service",
+  UPDATE_SUB_SERVICE_STATUS: "/sub-service/update-sub-service-status/",
   DELETE_SUB_SERVICE: "/sub-service/delete-sub-service",
 
   //STATE
@@ -89,13 +112,19 @@ const apiUrl = {
   GET_ALL_BANNERS: "/banners/get-all-banners",
   DELETE_BANNER: "/banners/deletebanner/",
 
-  // FAQ AND T&C
+  // FAQ
   ADD_FAQ: "/faq/add-faq",
   GET_ALL_FAQ: "/faq/get-all-faq",
   UPDATE_FAQ: "/faq/update-faq/",
   DELETE_FAQ: "/faq/delete-faq/",
+  FAQ_STATUS: "/faq/update-faq-status/",
+
+  // T&C
   SAVE_TNC: "/tnc/save-tnc",
   GET_ALL_TNC: "/tnc/get-all-tnc",
+
+  SAVE_USER_TNC: "/user-tnc/add-tnc-user",
+  GET_USER_TNC: "/user-tnc/get-all-tnc-user",
   // DELETE_TNC: "/tnc/delete-tnc/",
 
   //YOUTUBE LINK
@@ -117,5 +146,15 @@ const apiUrl = {
   CONFIRM_PAYOUT: "/payouts/confirm-payout-processed/",
   GET_PAYOUTS_BY_ID: "/payouts/get-payouts-by-id/",
   GET_ALL_PAYOUTS: "/payouts/get-all-payouts",
+
+  // TECH PAYOUT
+  ADD_TECH_PAYOUTS: "/technician-payouts/add-tech-payout",
+  CONFIRM_TECH_PAYOUT: "/technician-payouts/confirm-tech-payout-processed/",
+  GET_TECH_PAYOUTS_BY_ID: "/technician-payouts/get-tech-payouts-by-id/",
+  GET_ALL_TECH_PAYOUTS: "/technician-payouts/get-all-tech-payouts",
+
+  // PAYOUT CONFIG
+  ADD_PAYOUT_CONFIG: "/payout-config/add-or-update-config",
+  GET_PAYOUT_CONFIG: "/payout-config/get-payout-config-profile",
 };
 export { apiUrl };

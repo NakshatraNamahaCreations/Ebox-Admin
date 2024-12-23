@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
-import { CgUnblock } from "react-icons/cg";
+import { FaCheck } from "react-icons/fa6";
 import { MdEdit } from "react-icons/md";
 import { MdDelete, MdBlock } from "react-icons/md";
 import Loader from "../../loader/Loader";
@@ -55,6 +55,23 @@ function FAQList() {
     }
   };
 
+  const toggleServiceStatus = async (id, currentStatus) => {
+    try {
+      const res = await axios.put(
+        `${apiUrl.BASEURL}${apiUrl.FAQ_STATUS}${id}`,
+        {
+          isActive: !currentStatus,
+        }
+      );
+      if (res.status === 200) {
+        fetchFAQ();
+        alert(res.data.message || "Status updated!");
+      }
+    } catch (error) {
+      console.error("Error updating service status:", error);
+    }
+  };
+
   const columns = [
     {
       name: "Sl.No",
@@ -88,27 +105,27 @@ function FAQList() {
             >
               <MdEdit size={16} color="white" />
             </div>
-            {row.isBlocked === true ? (
+            {row.isActive ? (
               <div
                 style={{
                   backgroundColor: "#35cd3a",
                   padding: "7px 13px",
                   cursor: "pointer",
                 }}
-                title="Unblock"
-                // onClick={() => unblockUser(row._id)}
+                title="Active"
+                onClick={() => toggleServiceStatus(row._id, row.isActive)}
               >
-                <CgUnblock size={16} color="white" />
+                <FaCheck size={16} color="white" />
               </div>
             ) : (
               <div
-                title="Block"
+                title="Inactive"
                 style={{
                   backgroundColor: "#2f4e9e",
                   padding: "7px 13px",
                   cursor: "pointer",
                 }}
-                // onClick={() => blockUser(row._id)}
+                onClick={() => toggleServiceStatus(row._id, row.isActive)}
               >
                 <MdBlock size={16} color="white" />
               </div>

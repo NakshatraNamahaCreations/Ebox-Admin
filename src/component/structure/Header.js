@@ -11,16 +11,28 @@ function Header() {
   // const user = JSON.parse(storedUser);
 
   switch (pathname) {
-    case "/dashboard":
+    // case "/dashboard":
+    //   return (
+    //     <div>
+    //       <div className="headerTitle-0-1-70">
+    //         Hi, Admin
+    //         {/* {user.member_name} */}
+    //       </div>
+    //       <div className="headerDesc-0-1-71">
+    //         <div>Welcome Back!</div>
+    //       </div>
+    //     </div>
+    //   );
+    case "/":
       return (
         <div>
-          <div className="headerTitle-0-1-70">
-            Hi, Admin
-            {/* {user.member_name} */}
-          </div>
-          <div className="headerDesc-0-1-71">
-            <div>Welcome Back!</div>
-          </div>
+          <div className="headerTitle-0-1-70">Company Profile</div>
+        </div>
+      );
+    case "/technicians/technicians-list":
+      return (
+        <div>
+          <div className="headerTitle-0-1-70">Technicians</div>
         </div>
       );
     case "/service/addservice":
@@ -191,7 +203,7 @@ function Header() {
             <div className="mt-2">
               <button
                 style={{
-                  backgroundColor: "#90e447",
+                  backgroundColor: "#609ecc",
                   border: "#7ac536",
                   color: "white",
                   borderRadius: "3px",
@@ -220,7 +232,7 @@ function Header() {
             <div className="mt-2">
               <button
                 style={{
-                  backgroundColor: "#90e447",
+                  backgroundColor: "#609ecc",
                   border: "#7ac536",
                   color: "white",
                   borderRadius: "3px",
@@ -254,25 +266,22 @@ function Header() {
           <div className="headerTitle-0-1-70">Youtube Videos</div>
         </div>
       );
-    case "/people/team-members":
+    case "/booking/user-cancel-events":
       return (
         <div>
-          <div className="headerTitle-0-1-70">Team Members</div>
+          <div className="headerTitle-0-1-70">Cancel Events</div>
         </div>
       );
-    case "/people/team-members/create":
+    case "/booking/user-rescheduled-events":
       return (
         <div>
-          <div className="headerTitle-0-1-70">Add Team Members</div>
+          <div className="headerTitle-0-1-70">Rescheduled Events</div>
         </div>
       );
-    case "/chat":
+    case "/payout-config":
       return (
         <div>
-          <div className="headerTitle-0-1-70">Chat</div>
-          <div className="headerDesc-0-1-71">
-            <div>Send messages to your students on a daily basis</div>
-          </div>
+          <div className="headerTitle-0-1-70">Payout Config</div>
         </div>
       );
     default:

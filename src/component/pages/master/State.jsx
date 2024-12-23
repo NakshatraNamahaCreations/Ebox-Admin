@@ -170,7 +170,7 @@ function State() {
       selector: (row) => (
         <>
           <div style={{ display: "flex" }}>
-            <div
+            {/* <div
               style={{
                 backgroundColor: "#ffa534",
                 padding: "7px 4px",
@@ -180,7 +180,7 @@ function State() {
               title="Edit"
             >
               <MdEdit size={16} color="white" />
-            </div>
+            </div> */}
             <div
               style={{
                 backgroundColor: row.isStateActive ? "#35cd3a" : "#2f4e9e",
@@ -374,7 +374,7 @@ const styles = {
     border: "1px solid #ccc",
   },
   buttonForEveything: {
-    backgroundColor: "#90e447",
+    backgroundColor: "#609ecc",
     border: "#7ac536",
     color: "white",
     borderRadius: "3px",

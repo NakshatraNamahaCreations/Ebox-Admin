@@ -3,6 +3,8 @@ import { TiDelete } from "react-icons/ti";
 import { postData } from "../../../api-services/apiHelper";
 import { apiUrl } from "../../../api-services/apiContents";
 import axios from "axios";
+import { IoMdAdd } from "react-icons/io";
+import { Button } from "react-bootstrap";
 
 function ChipInput({ serviceId }) {
   const [text, setText] = useState("");
@@ -18,11 +20,15 @@ function ChipInput({ serviceId }) {
     setChips(updatedChips);
   }
 
+  const generateUniqueId = () => {
+    return Math.floor(100000 + Math.random() * 900000);
+  };
+
   // Handle adding chip with button
   function handleAddChip() {
     // Validate fields
     if (!text) {
-      setValidationError("Please enter text and select a type.");
+      setValidationError("Please enter a text!");
       return;
     }
     // Check for duplicates
@@ -33,7 +39,7 @@ function ChipInput({ serviceId }) {
     // Add chip to array
     setChips((prevState) => [
       ...prevState,
-      { parameter: text, field_type: type },
+      { parameter: text, field_type: type, unique_id: generateUniqueId() },
     ]);
     setText("");
     setType("");
@@ -98,15 +104,20 @@ function ChipInput({ serviceId }) {
           <option value="Timing"> Time</option>
         </select> */}
 
-        <button className="col-md-3 ms-3" onClick={handleAddChip}>
-          Add
-        </button>
+        <Button
+          className="col-md-3 ms-3"
+          style={{ width: "fit-content" }}
+          onClick={handleAddChip}
+        >
+          <IoMdAdd color="white" />
+        </Button>
       </div>
       <ul style={styles.chips}>
         {chips.map((chip) => (
           <li key={chip} style={styles.chip}>
             <span style={styles.chipSpan}>
-              {chip.parameter} ({chip.field_type})
+              {chip.parameter}
+              {/* ({chip.field_type}) */}
             </span>
             <TiDelete
               style={styles.svgIcon}
@@ -121,7 +132,7 @@ function ChipInput({ serviceId }) {
       {chips.length > 0 && (
         <button
           style={{
-            backgroundColor: "#90e447",
+            backgroundColor: "#609ecc",
             border: "#7ac536",
             color: "white",
             borderRadius: "3px",

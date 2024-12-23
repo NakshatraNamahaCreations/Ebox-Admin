@@ -123,9 +123,23 @@ function TicketListing() {
   ];
 
   return (
-    <div>
-      <div className="headerTitle-0-1-70 mb-2">
-        Ticket List({ticketList.length}){" "}
+    <div style={{ backgroundColor: "white" }}>
+      <div className="d-flex p-2" style={{ justifyContent: "space-between" }}>
+        <div className="headerTitle-0-1-70 mb-2">
+          Ticket List({ticketList.length}){" "}
+        </div>
+        <div className="me-4">
+          <select
+            style={{
+              border: "1px solid #ebedf2",
+              padding: "2px 5px",
+              borderRadius: "5px",
+              marginTop: "10px",
+            }}
+          >
+            <option value="all">All</option>
+          </select>
+        </div>
       </div>
       {isLoading && <Loader />}
       <DataTable

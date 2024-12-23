@@ -40,6 +40,15 @@ import City from "./component/pages/master/City";
 import Address from "./component/pages/master/Address";
 import Youtube from "./component/pages/More/Youtube";
 import Calculator from "./component/pages/bookings/user/Calculator";
+import CancelEvent from "./component/pages/bookings/user/CancelEvent";
+import RescheduleEvents from "./component/pages/bookings/user/RescheduleEvents";
+import CompanyProfile from "./component/pages/panel/CompanyProfile";
+import ServicePayouts from "./component/pages/bookings/user/ServicePayouts";
+import PayoutConfig from "./component/pages/bookings/user/PayoutConfig";
+import Technicians from "./component/pages/people/team/Technicians";
+import AppPrivacyPolicy from "./AppPrivacyPolicy";
+import TechnicianPayouts from "./component/pages/bookings/user/TechnicianPayouts";
+import TechPayoutDetails from "./component/pages/bookings/user/TechPayoutDetails";
 
 // https://github.com/NakshatraNamahaCreations/eventboxadmin.git
 
@@ -47,8 +56,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route path="/" element={<Login />} /> */}
-        <Route
+        <Route path="/login" element={<Login />} />
+        {/* <Route
           path="/"
           element={
             <Layout
@@ -56,6 +65,18 @@ function App() {
                 <>
                   <Header />
                   <Dashboard />
+                </>
+              }
+            />
+          }
+        /> */}
+        <Route
+          path="/"
+          element={
+            <Layout
+              children={
+                <>
+                  <CompanyProfile />
                 </>
               }
             />
@@ -244,7 +265,19 @@ function App() {
             />
           }
         /> */}
-
+        <Route
+          path="/technicians/technicians-list"
+          element={
+            <Layout
+              children={
+                <>
+                  <Header />
+                  <Technicians />
+                </>
+              }
+            />
+          }
+        />
         <Route
           path="/team/team-list"
           element={
@@ -298,6 +331,14 @@ function App() {
           }
         />
         <Route
+          path="/booking/user-cancel-events"
+          element={<Layout children={<CancelEvent />} />}
+        />
+        <Route
+          path="/booking/user-rescheduled-events"
+          element={<Layout children={<RescheduleEvents />} />}
+        />
+        <Route
           path="/calculator"
           element={
             <Layout
@@ -311,7 +352,11 @@ function App() {
           }
         />
         <Route
-          path="/payouts"
+          path="/payout-config"
+          element={<Layout children={<PayoutConfig />} />}
+        />
+        <Route
+          path="/products-payouts"
           element={
             <Layout
               children={
@@ -323,6 +368,46 @@ function App() {
             />
           }
         />
+        <Route
+          path="/service-payouts"
+          element={
+            <Layout
+              children={
+                <>
+                  <Header />
+                  <ServicePayouts />
+                </>
+              }
+            />
+          }
+        />
+        <Route
+          path="/technician-payouts"
+          element={
+            <Layout
+              children={
+                <>
+                  <Header />
+                  <TechnicianPayouts />
+                </>
+              }
+            />
+          }
+        />
+        <Route
+          path="/tech-payouts-details"
+          element={
+            <Layout
+              children={
+                <>
+                  <Header />
+                  <TechPayoutDetails />
+                </>
+              }
+            />
+          }
+        />
+
         <Route
           path="/payouts-details"
           element={
@@ -344,19 +429,6 @@ function App() {
                 <>
                   <Header />
                   <PayoutInvoice />
-                </>
-              }
-            />
-          }
-        />
-        <Route
-          path="/add-product"
-          element={
-            <Layout
-              children={
-                <>
-                  <Header />
-                  <Add_Product />
                 </>
               }
             />
@@ -518,6 +590,20 @@ function App() {
             />
           }
         />
+        <Route
+          path="/add-product"
+          element={
+            <Layout
+              children={
+                <>
+                  <Header />
+                  <Add_Product />
+                </>
+              }
+            />
+          }
+        />
+        <Route path="/privacy-policy" element={<AppPrivacyPolicy />} />
       </Routes>
     </BrowserRouter>
   );

@@ -87,10 +87,19 @@ const categoryFabrication = [
   { label: "Included Components", value: "9" },
   { label: "Indoor/Outdoor Usage", value: "10" },
 ];
+const categoryShamiana = [
+  { label: "Frame Material", value: "1" },
+  { label: "Water Resistance Level", value: "2" },
+  { label: "Ultraviolet Light Protection", value: "3" },
+  { label: "Shape", value: "4" },
+  { label: "Assembly Required", value: "5" },
+  { label: "Water Resistance Level", value: "6" },
+];
 export {
   categorySound,
   categoryLightings,
   categoryVideo,
   categoryGenSet,
   categoryFabrication,
+  categoryShamiana,
 };

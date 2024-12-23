@@ -4,6 +4,8 @@ import Loader from "../../loader/Loader";
 import axios from "axios";
 import ChipInput from "./ChipInput";
 import DataTable from "react-data-table-component";
+import { FaDownload } from "react-icons/fa6";
+import { MdDelete } from "react-icons/md";
 
 function Requirements() {
   const [serviceListData, setServiceListData] = useState([]);
@@ -14,7 +16,7 @@ function Requirements() {
     setIsLoading(true);
     try {
       const serviceRes = await axios.get(
-        `${apiUrl.BASEURL}${apiUrl.GET_ALL_SERVICE}`
+        `${apiUrl.BASEURL}${apiUrl.GET_ACTIVE_SERVICE}`
       );
       if (serviceRes.status === 200) {
         setServiceListData(serviceRes.data.data);
@@ -34,6 +36,32 @@ function Requirements() {
   );
   // console.log("requiments", requimentsList);
 
+  const deleteRequirementField = async (serviceId, uniqueId) => {
+    try {
+      const response = await fetch(
+        `${apiUrl.BASEURL}/services/${uniqueId}/delete-field`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ serviceId }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        alert("Requirement field deleted successfully!");
+        console.log(data);
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.message}`);
+      }
+    } catch (error) {
+      console.error("Error deleting requirement field:", error);
+    }
+  };
+
   const columns = [
     {
       name: "Service Name",
@@ -52,11 +80,10 @@ function Requirements() {
                   margin: "auto",
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr",
-                  //  "1fr  / repeat(4, minmax(0, 10fr)) ",
                   gap: "10px",
                 }}
               >
-                {ele.parameter} - ({ele.field_type})
+                {ele.parameter}{" "}
               </li>
             ))}
           </ul>
@@ -64,6 +91,8 @@ function Requirements() {
       ),
     },
   ];
+
+  console.log("serviceListData", serviceListData);
 
   return (
     <div>
@@ -102,6 +131,49 @@ function Requirements() {
           </div>
         </div>
         <div className="col-md-6">
+          {/* <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "15px",
+              padding: "10px 20px",
+            }}
+          >
+            <table
+              style={{
+                border: "1px solid #f4f4f4",
+              }}
+            >
+              <thead>
+                <tr>
+                  <th>Service Name </th>
+                  <th>Requirement Fields </th>
+                </tr>
+              </thead>
+              {requimentsList.map((row) => (
+                <tr>
+                  <td> {row.service_name}</td>
+                  <td>
+                    {row.requirement_fields.map((ele, index) => (
+                      <div key={index}>
+                        <span style={styles.span}>{ele.parameter}</span>
+                        <span style={styles.span}>
+                          <MdDelete
+                            onClick={() =>
+                              deleteRequirementField(row._id, ele.unique_id)
+                            }
+                            className="ms-2 me-2"
+                            style={{ cursor: "pointer" }}
+                            size={16}
+                            color="#2F4E9E"
+                          />
+                        </span>
+                      </div>
+                    ))}
+                  </td>
+                </tr>
+              ))}
+            </table>
+          </div> */}
           <DataTable columns={columns} data={requimentsList} pagination />
         </div>
       </div>
@@ -125,12 +197,16 @@ const styles = {
     border: "1px solid #ccc",
   },
   buttonForEveything: {
-    backgroundColor: "#90e447",
+    backgroundColor: "#609ecc",
     border: "#7ac536",
     color: "white",
     borderRadius: "3px",
     fontSize: "14px",
     padding: "5px 10px",
+  },
+  span: {
+    display: "inline-block",
+    margin: "5px",
   },
 };
 export default Requirements;

@@ -6,7 +6,7 @@ import { apiUrl } from "../../../../api-services/apiContents";
 import moment from "moment";
 // import "./payout.module.css";
 
-function PayoutDetails() {
+function TechPayoutDetails() {
   const location = useLocation();
   const navigate = useNavigate();
   const payouts = location.state.details;
@@ -68,7 +68,8 @@ function PayoutDetails() {
         alert("Please enter a remark");
       } else {
         const response = await axios.post(
-          `${apiUrl.BASEURL}${apiUrl.ADD_PAYOUTS}`,
+          // `http://localhost:9000/api${apiUrl.ADD_TECH_PAYOUTS}`,
+          `${apiUrl.BASEURL}${apiUrl.ADD_TECH_PAYOUTS}`,
           {
             store: sellerData.shop_name,
             seller_id: sellerData._id,
@@ -104,7 +105,8 @@ function PayoutDetails() {
         alert("Please enter a Process Remarks and Processed Date");
       } else {
         const response = await axios.put(
-          `${apiUrl.BASEURL}${apiUrl.CONFIRM_PAYOUT}${payouts.payout_id}`,
+          // `http://localhost:9000/api${apiUrl.CONFIRM_TECH_PAYOUT}${payouts.payout_id}`,
+          `${apiUrl.BASEURL}${apiUrl.CONFIRM_TECH_PAYOUT}${payouts.payout_id}`,
           {
             created_date: moment().format("lll"),
             updated_by: "Admin",
@@ -129,6 +131,7 @@ function PayoutDetails() {
     }
   };
 
+  // chage rhe url to failuter later
   const updateFailureStatus = async () => {
     try {
       if (!failureRemarks) {
@@ -388,4 +391,4 @@ const styles = {
   },
 };
 
-export default PayoutDetails;
+export default TechPayoutDetails;

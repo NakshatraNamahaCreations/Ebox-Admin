@@ -6,9 +6,11 @@ import {
   categoryVideo,
   categoryGenSet,
   categoryFabrication,
+  categoryShamiana,
 } from "../global-data/global-data";
 import axios from "axios";
 import { apiUrl } from "../api-services/apiContents";
+import * as XLSX from "xlsx";
 
 function Add_Product() {
   const [galleryImages, setGalleryImages] = useState([]);
@@ -27,6 +29,7 @@ function Add_Product() {
   const [countryOfOrigin, setCountryOfOrigin] = useState("");
   const [manufactureName, setManufactureName] = useState("");
   const [color, setColor] = useState("");
+  const [file, setFile] = useState(null);
   const [warranty, setWarranty] = useState("");
   const categories = [
     { type: "Sound" },
@@ -34,7 +37,7 @@ function Add_Product() {
     { type: "Video" },
     { type: "Fabrication" },
     { type: "Genset" },
-    { type: "shamiana" },
+    { type: "Shamiana" },
   ];
 
   const [addItems, setAddItems] = useState([
@@ -97,8 +100,8 @@ function Add_Product() {
     try {
       // Prepare form data
       const formData = new FormData();
-      formData.append("vendor_id", "67062b13e0297d4e91ab5019");
-      formData.append("vendor_name", "Balaji");
+      formData.append("vendor_id", "670622e9668b7b32798e6c96");
+      formData.append("vendor_name", "Mani thiruvengadam");
       formData.append("product_type", "rental");
       formData.append("product_name", productName);
       formData.append("product_price", productPrice);
@@ -114,7 +117,7 @@ function Add_Product() {
       formData.append("country_of_orgin", countryOfOrigin);
       formData.append("manufacturer_name", manufactureName);
       formData.append("product_color", color);
-      formData.append("shop_name", "Balaji Electricals & Electronics");
+      formData.append("shop_name", "Mani Electricals");
 
       formData.append(
         "Specifications",
@@ -188,336 +191,580 @@ function Add_Product() {
     }
   };
 
+  const downloadExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet([
+      {
+        shop_name: "",
+        vendor_id: "",
+        vendor_name: "",
+        product_category: "",
+        product_type: "",
+        product_name: "",
+        product_price: "",
+        mrp_rate: "",
+        discount: "",
+        brand: "",
+        stock_in_hand: "",
+        model_name: "",
+        material_type: "",
+        product_dimension: "",
+        product_weight: "",
+        country_of_orgin: "",
+        warranty: "",
+        manufacturer_name: "",
+        product_color: "",
+      },
+    ]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Service Name");
+    XLSX.writeFile(workbook, "product-template.xlsx");
+  };
+
+  const uploadFile = (event) => {
+    const uploadedFile = event.target.files[0];
+    setFile(uploadedFile);
+  };
+
+  const addExcel = async () => {
+    if (!file) {
+      alert("Please select a file");
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = async (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        console.log("Raw Excel Data:", jsonData);
+
+        // Map the data to include only required fields
+        const mappedData = jsonData.map((item) => ({
+          service_name: item["service_name"],
+          shop_name: item["shop_name"],
+          vendor_id: item["vendor_id"],
+          vendor_name: item["vendor_name"],
+          product_category: item["product_category"],
+          product_type: item["product_type"],
+          product_name: item["product_name"],
+          product_price: item["product_price"],
+          mrp_rate: item["mrp_rate"],
+          discount: item["discount"],
+          brand: item["brand"],
+          stock_in_hand: item["stock_in_hand"],
+          model_name: item["model_name"],
+          material_type: item["material_type"],
+          product_dimension: item["product_dimension"],
+          product_weight: item["product_weight"],
+          country_of_orgin: item["country_of_orgin"],
+          warranty: item["warranty"],
+          manufacturer_name: item["manufacturer_name"],
+          product_color: item["product_color"],
+          // Ensure approval_status is added here in case backend requires it
+          // approval_status: false,
+        }));
+
+        console.log("Mapped Data:", mappedData);
+
+        // Send data to backend
+        const response = await axios.post(
+          `${apiUrl.BASEURL}${apiUrl.ADD_PRODUCTS_VIA_EXCEL}`,
+          mappedData
+        );
+
+        if (response.status === 200) {
+          alert("Products Added Successfully!");
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error("Error sending data to backend:", error);
+        alert("Failed to add products. Please try again.");
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
+  };
+
+  // const addExcel = async () => {
+  //   if (file === "") {
+  //     alert("Please select a file");
+  //   } else {
+  //     if (file) {
+  //       const reader = new FileReader();
+  //       reader.onload = (e) => {
+  //         const data = new Uint8Array(e.target.result);
+  //         const workbook = XLSX.read(data, { type: "array" });
+  //         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+  //         const jsonData = XLSX.utils.sheet_to_json(worksheet);
+  //         console.log("Raw Excel Data:", jsonData);
+
+  //         const jsonData1 = jsonData.map((item) => ({
+  //           service_name: item["service_name"],
+  //           shop_name: item["shop_name"],
+  //           vendor_id: item["vendor_id"],
+  //           vendor_name: item["vendor_name"],
+  //           product_category: item["product_category"],
+  //           product_type: item["product_type"],
+  //           product_name: item["product_name"],
+  //           product_price: item["product_price"],
+  //           mrp_rate: item["mrp_rate"],
+  //           discount: item["discount"],
+  //           brand: item["brand"],
+  //           stock_in_hand: item["stock_in_hand"],
+  //           model_name: item["model_name"],
+  //           material_type: item["material_type"],
+  //           product_dimension: item["product_dimension"],
+  //           product_weight: item["product_weight"],
+  //           country_of_orgin: item["country_of_orgin"],
+  //           warranty: item["warranty"],
+  //           manufacturer_name: item["manufacturer_name"],
+  //           product_color: item["product_color"],
+  //         }));
+
+  //         // console.log("Mapped Data:", jsonData1);
+
+  //         try {
+  //           const addProduct = axios.post(
+  //             `${apiUrl.BASEURL}${apiUrl.ADD_PRODUCTS_VIA_EXCEL}`,
+  //             jsonData1
+  //           );
+  //           if (addProduct.status === 200) {
+  //             // console.log("addProduct", addProduct);
+  //             alert("Products Added!!!");
+  //             window.location.reload();
+  //           }
+  //         } catch (error) {
+  //           console.error("Error sending data to backend:", error);
+  //         }
+  //       };
+  //       reader.readAsArrayBuffer(file);
+  //     } else {
+  //       alert("Please upload a file first.");
+  //     }
+  //   }
+  // };
+
   return (
-    <div>
-      <b> Add Product</b>
-      <br />
-      Product Image(s){" "}
-      <input
-        className="mb-1"
-        accept="image/jpeg,image/jpg,image/png,image/webp"
-        id="icon-button-file"
-        type="file"
-        multiple
-        onChange={(e) => handleDocumentUpload(e, "image")}
-      />{" "}
-      <br />
-      Product Video(s){" "}
-      <input
-        className="mb-1"
-        accept="video/mp4,video/mkv,video/x-m4v,video/*"
-        id="icon-button-file"
-        type="file"
-        multiple
-        onChange={(e) => handleDocumentUpload(e, "video")}
-      />
-      <br />
-      Select Category{" "}
-      <select
-        className="mb-1"
-        onChange={(e) => setSelectedCategory(e.target.value)}
-      >
-        <option value="">Select</option>
-        {categories.map((ele) => (
-          <option key={ele.type} value={ele.type}>
-            {ele.type}
-          </option>
-        ))}
-      </select>
-      <br />
-      <input
-        className="mb-1"
-        type="text"
-        placeholder="Product Name"
-        value={productName}
-        onChange={(e) => setProductName(e.target.value)}
-      />{" "}
-      <input
-        className="mb-1"
-        type="number"
-        placeholder="Price"
-        min={1}
-        value={productPrice}
-        onChange={(e) => setProductPrice(e.target.value)}
-      />{" "}
-      <input
-        className="mb-1"
-        type="number"
-        placeholder="MRP Rate"
-        value={mrpRate}
-        min={1}
-        onChange={(e) => setMrpRate(e.target.value)}
-      />{" "}
-      <input
-        className="mb-1"
-        placeholder="Discount"
-        value={productPrice && mrpRate ? discountValue : 0}
-        disabled
-        onChange={(e) => setProductDiscount(e.target.value)}
-      />
-      <input
-        className="mb-1"
-        type="text"
-        placeholder="Brand"
-        value={productBrand}
-        onChange={(e) => setProductBrand(e.target.value)}
-      />{" "}
-      <input
-        className="mb-1"
-        type="number"
-        placeholder="Quantity"
-        value={stockInHand}
-        onChange={(e) => setStockInHand(e.target.value)}
-      />{" "}
-      <input
-        className="mb-1"
-        type="text"
-        placeholder="Model Name"
-        value={modelName}
-        onChange={(e) => setModelName(e.target.value)}
-      />{" "}
-      <input
-        className="mb-1"
-        type="text"
-        placeholder="Material Type"
-        value={materialType}
-        onChange={(e) => setMaterialType(e.target.value)}
-      />{" "}
-      <input
-        className="mb-1"
-        type="text"
-        placeholder="Product dimensions"
-        value={productDimension}
-        onChange={(e) => setProductDimension(e.target.value)}
-      />{" "}
-      <input
-        className="mb-1"
-        type="text"
-        placeholder="Product Weight"
-        value={productWeight}
-        onChange={(e) => setProductWeight(e.target.value)}
-      />{" "}
-      <input
-        className="mb-1"
-        type="text"
-        placeholder="Country of Origin"
-        value={countryOfOrigin}
-        onChange={(e) => setCountryOfOrigin(e.target.value)}
-      />{" "}
-      <input
-        className="mb-1"
-        type="text"
-        placeholder="Manufacturer"
-        value={manufactureName}
-        onChange={(e) => setManufactureName(e.target.value)}
-      />{" "}
-      <input
-        className="mb-1"
-        type="text"
-        placeholder="Color"
-        value={color}
-        onChange={(e) => setColor(e.target.value)}
-      />{" "}
-      <input
-        className="mb-1"
-        type="text"
-        placeholder="Warranty"
-        value={warranty}
-        onChange={(e) => setWarranty(e.target.value)}
-      />{" "}
-      <br />
-      <br />
-      Add Specifications <Button onClick={addSpecifications}>+</Button>
-      <br />
-      <br />
-      {selectedCategory === "Sound" ? (
-        <>
-          {addItems.map((ele, index) => (
-            <div key={index} style={{ display: "flex", marginBottom: "10px" }}>
-              <div style={{ flex: 0.6, marginRight: "2px" }}>
-                <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    {ele.selectItem || "Select a feature"}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {categorySound.map((item) => (
-                      <Dropdown.Item
-                        key={item.value}
-                        onClick={() =>
-                          handleSelectItemChange(index, item.label)
-                        }
-                      >
-                        {item.label}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </div>
-              <div style={{ flex: 0.4, marginLeft: "2px" }}>
-                <input
-                  type="text"
-                  placeholder="e.g. Wired or wireless"
-                  value={ele.ItemSpecification}
-                  onChange={(e) =>
-                    handleSpecificationChange(index, e.target.value)
-                  }
-                  style={{ width: "100%" }}
-                />
-              </div>
-            </div>
+    <div className="row">
+      <div className="col-md-6">
+        <b> Add Product</b>
+        <br />
+        Product Image(s){" "}
+        <input
+          className="mb-1"
+          accept="image/jpeg,image/jpg,image/png,image/webp"
+          id="icon-button-file"
+          type="file"
+          multiple
+          onChange={(e) => handleDocumentUpload(e, "image")}
+        />{" "}
+        <br />
+        Product Video(s){" "}
+        <input
+          className="mb-1"
+          accept="video/mp4,video/mkv,video/x-m4v,video/*"
+          id="icon-button-file"
+          type="file"
+          multiple
+          onChange={(e) => handleDocumentUpload(e, "video")}
+        />
+        <br />
+        Select Category{" "}
+        <select
+          className="mb-1"
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          <option value="">Select</option>
+          {categories.map((ele) => (
+            <option key={ele.type} value={ele.type}>
+              {ele.type}
+            </option>
           ))}
-        </>
-      ) : selectedCategory === "Lighting" ? (
-        <>
-          {addItems.map((ele, index) => (
-            <div key={index} style={{ display: "flex", marginBottom: "10px" }}>
-              <div style={{ flex: 0.6, marginRight: "2px" }}>
-                <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    {ele.selectItem || "Select a feature"}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {categoryLightings.map((item) => (
-                      <Dropdown.Item
-                        key={item.value}
-                        onClick={() =>
-                          handleSelectItemChange(index, item.label)
-                        }
-                      >
-                        {item.label}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
+        </select>
+        <br />
+        <input
+          className="mb-1"
+          type="text"
+          placeholder="Product Name"
+          value={productName}
+          onChange={(e) => setProductName(e.target.value)}
+        />{" "}
+        <input
+          className="mb-1"
+          type="number"
+          placeholder="Price"
+          min={1}
+          value={productPrice}
+          onChange={(e) => setProductPrice(e.target.value)}
+        />{" "}
+        <input
+          className="mb-1"
+          type="number"
+          placeholder="MRP Rate"
+          value={mrpRate}
+          min={1}
+          onChange={(e) => setMrpRate(e.target.value)}
+        />{" "}
+        <input
+          className="mb-1"
+          placeholder="Discount"
+          value={productPrice && mrpRate ? discountValue : 0}
+          disabled
+          onChange={(e) => setProductDiscount(e.target.value)}
+        />
+        <input
+          className="mb-1"
+          type="text"
+          placeholder="Brand"
+          value={productBrand}
+          onChange={(e) => setProductBrand(e.target.value)}
+        />{" "}
+        <input
+          className="mb-1"
+          type="number"
+          placeholder="Quantity"
+          value={stockInHand}
+          onChange={(e) => setStockInHand(e.target.value)}
+        />{" "}
+        <input
+          className="mb-1"
+          type="text"
+          placeholder="Model Name"
+          value={modelName}
+          onChange={(e) => setModelName(e.target.value)}
+        />{" "}
+        <input
+          className="mb-1"
+          type="text"
+          placeholder="Material Type"
+          value={materialType}
+          onChange={(e) => setMaterialType(e.target.value)}
+        />{" "}
+        <input
+          className="mb-1"
+          type="text"
+          placeholder="Product dimensions"
+          value={productDimension}
+          onChange={(e) => setProductDimension(e.target.value)}
+        />{" "}
+        <input
+          className="mb-1"
+          type="text"
+          placeholder="Product Weight"
+          value={productWeight}
+          onChange={(e) => setProductWeight(e.target.value)}
+        />{" "}
+        <input
+          className="mb-1"
+          type="text"
+          placeholder="Country of Origin"
+          value={countryOfOrigin}
+          onChange={(e) => setCountryOfOrigin(e.target.value)}
+        />{" "}
+        <input
+          className="mb-1"
+          type="text"
+          placeholder="Manufacturer"
+          value={manufactureName}
+          onChange={(e) => setManufactureName(e.target.value)}
+        />{" "}
+        <input
+          className="mb-1"
+          type="text"
+          placeholder="Color"
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
+        />{" "}
+        <input
+          className="mb-1"
+          type="text"
+          placeholder="Warranty"
+          value={warranty}
+          onChange={(e) => setWarranty(e.target.value)}
+        />{" "}
+        <br />
+        <br />
+        Add Specifications <Button onClick={addSpecifications}>+</Button>
+        <br />
+        <br />
+        {selectedCategory === "Sound" ? (
+          <>
+            {addItems.map((ele, index) => (
+              <div
+                key={index}
+                style={{ display: "flex", marginBottom: "10px" }}
+              >
+                <div style={{ flex: 0.6, marginRight: "2px" }}>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                      {ele.selectItem || "Select a feature"}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      {categorySound.map((item) => (
+                        <Dropdown.Item
+                          key={item.value}
+                          onClick={() =>
+                            handleSelectItemChange(index, item.label)
+                          }
+                        >
+                          {item.label}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+                <div style={{ flex: 0.4, marginLeft: "2px" }}>
+                  <input
+                    type="text"
+                    placeholder="e.g. Wired or wireless"
+                    value={ele.ItemSpecification}
+                    onChange={(e) =>
+                      handleSpecificationChange(index, e.target.value)
+                    }
+                    style={{ width: "100%" }}
+                  />
+                </div>
               </div>
-              <div style={{ flex: 0.6, marginLeft: "2px" }}>
-                <input
-                  type="text"
-                  placeholder="e.g. RGB or single color"
-                  value={ele.ItemSpecification}
-                  onChange={(e) =>
-                    handleSpecificationChange(index, e.target.value)
-                  }
-                  style={{ width: "100%" }}
-                />
+            ))}
+          </>
+        ) : selectedCategory === "Lighting" ? (
+          <>
+            {addItems.map((ele, index) => (
+              <div
+                key={index}
+                style={{ display: "flex", marginBottom: "10px" }}
+              >
+                <div style={{ flex: 0.6, marginRight: "2px" }}>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                      {ele.selectItem || "Select a feature"}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      {categoryLightings.map((item) => (
+                        <Dropdown.Item
+                          key={item.value}
+                          onClick={() =>
+                            handleSelectItemChange(index, item.label)
+                          }
+                        >
+                          {item.label}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+                <div style={{ flex: 0.6, marginLeft: "2px" }}>
+                  <input
+                    type="text"
+                    placeholder="e.g. RGB or single color"
+                    value={ele.ItemSpecification}
+                    onChange={(e) =>
+                      handleSpecificationChange(index, e.target.value)
+                    }
+                    style={{ width: "100%" }}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
-        </>
-      ) : selectedCategory === "Video" ? (
-        <>
-          {addItems.map((ele, index) => (
-            <div key={index} style={{ display: "flex", marginBottom: "10px" }}>
-              <div style={{ flex: 0.6, marginRight: "2px" }}>
-                <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    {ele.selectItem || "Select a feature"}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {categoryVideo.map((item) => (
-                      <Dropdown.Item
-                        key={item.value}
-                        onClick={() =>
-                          handleSelectItemChange(index, item.label)
-                        }
-                      >
-                        {item.label}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
+            ))}
+          </>
+        ) : selectedCategory === "Video" ? (
+          <>
+            {addItems.map((ele, index) => (
+              <div
+                key={index}
+                style={{ display: "flex", marginBottom: "10px" }}
+              >
+                <div style={{ flex: 0.6, marginRight: "2px" }}>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                      {ele.selectItem || "Select a feature"}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      {categoryVideo.map((item) => (
+                        <Dropdown.Item
+                          key={item.value}
+                          onClick={() =>
+                            handleSelectItemChange(index, item.label)
+                          }
+                        >
+                          {item.label}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+                <div style={{ flex: 0.6, marginLeft: "2px" }}>
+                  <input
+                    type="text"
+                    placeholder="e.g. 4K or 1080p"
+                    value={ele.ItemSpecification}
+                    onChange={(e) =>
+                      handleSpecificationChange(index, e.target.value)
+                    }
+                    style={{ width: "100%" }}
+                  />
+                </div>
               </div>
-              <div style={{ flex: 0.6, marginLeft: "2px" }}>
-                <input
-                  type="text"
-                  placeholder="e.g. 4K or 1080p"
-                  value={ele.ItemSpecification}
-                  onChange={(e) =>
-                    handleSpecificationChange(index, e.target.value)
-                  }
-                  style={{ width: "100%" }}
-                />
+            ))}
+          </>
+        ) : selectedCategory === "Genset" ? (
+          <>
+            {addItems.map((ele, index) => (
+              <div
+                key={index}
+                style={{ display: "flex", marginBottom: "10px" }}
+              >
+                <div style={{ flex: 0.6, marginRight: "2px" }}>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                      {ele.selectItem || "Select a feature"}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      {categoryGenSet.map((item) => (
+                        <Dropdown.Item
+                          key={item.value}
+                          onClick={() =>
+                            handleSelectItemChange(index, item.label)
+                          }
+                        >
+                          {item.label}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+                <div style={{ flex: 0.6, marginLeft: "2px" }}>
+                  <input
+                    type="text"
+                    placeholder="e.g. Power output in kW"
+                    value={ele.ItemSpecification}
+                    onChange={(e) =>
+                      handleSpecificationChange(index, e.target.value)
+                    }
+                    style={{ width: "100%" }}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
-        </>
-      ) : selectedCategory === "Genset" ? (
-        <>
-          {addItems.map((ele, index) => (
-            <div key={index} style={{ display: "flex", marginBottom: "10px" }}>
-              <div style={{ flex: 0.6, marginRight: "2px" }}>
-                <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    {ele.selectItem || "Select a feature"}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {categoryGenSet.map((item) => (
-                      <Dropdown.Item
-                        key={item.value}
-                        onClick={() =>
-                          handleSelectItemChange(index, item.label)
-                        }
-                      >
-                        {item.label}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
+            ))}
+          </>
+        ) : selectedCategory === "Fabrication" ? (
+          <>
+            {addItems.map((ele, index) => (
+              <div
+                key={index}
+                style={{ display: "flex", marginBottom: "10px" }}
+              >
+                <div style={{ flex: 0.6, marginRight: "2px" }}>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                      {ele.selectItem || "Select a feature"}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      {categoryFabrication.map((item) => (
+                        <Dropdown.Item
+                          key={item.value}
+                          onClick={() =>
+                            handleSelectItemChange(index, item.label)
+                          }
+                        >
+                          {item.label}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+                <div style={{ flex: 0.6, marginLeft: "2px" }}>
+                  <input
+                    type="text"
+                    placeholder="e.g. Power output in kW"
+                    value={ele.ItemSpecification}
+                    onChange={(e) =>
+                      handleSpecificationChange(index, e.target.value)
+                    }
+                    style={{ width: "100%" }}
+                  />
+                </div>
               </div>
-              <div style={{ flex: 0.6, marginLeft: "2px" }}>
-                <input
-                  type="text"
-                  placeholder="e.g. Power output in kW"
-                  value={ele.ItemSpecification}
-                  onChange={(e) =>
-                    handleSpecificationChange(index, e.target.value)
-                  }
-                  style={{ width: "100%" }}
-                />
+            ))}
+          </>
+        ) : selectedCategory === "Shamiana" ? (
+          <>
+            {addItems.map((ele, index) => (
+              <div
+                key={index}
+                style={{ display: "flex", marginBottom: "10px" }}
+              >
+                <div style={{ flex: 0.6, marginRight: "2px" }}>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                      {ele.selectItem || "Select a feature"}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      {categoryShamiana.map((item) => (
+                        <Dropdown.Item
+                          key={item.value}
+                          onClick={() =>
+                            handleSelectItemChange(index, item.label)
+                          }
+                        >
+                          {item.label}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+                <div style={{ flex: 0.6, marginLeft: "2px" }}>
+                  <input
+                    type="text"
+                    placeholder="e.g. Power output in kW"
+                    value={ele.ItemSpecification}
+                    onChange={(e) =>
+                      handleSpecificationChange(index, e.target.value)
+                    }
+                    style={{ width: "100%" }}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
-        </>
-      ) : selectedCategory === "Fabrication" ? (
-        <>
-          {addItems.map((ele, index) => (
-            <div key={index} style={{ display: "flex", marginBottom: "10px" }}>
-              <div style={{ flex: 0.6, marginRight: "2px" }}>
-                <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    {ele.selectItem || "Select a feature"}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {categoryFabrication.map((item) => (
-                      <Dropdown.Item
-                        key={item.value}
-                        onClick={() =>
-                          handleSelectItemChange(index, item.label)
-                        }
-                      >
-                        {item.label}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </div>
-              <div style={{ flex: 0.6, marginLeft: "2px" }}>
-                <input
-                  type="text"
-                  placeholder="e.g. Power output in kW"
-                  value={ele.ItemSpecification}
-                  onChange={(e) =>
-                    handleSpecificationChange(index, e.target.value)
-                  }
-                  style={{ width: "100%" }}
-                />
-              </div>
-            </div>
-          ))}
-        </>
-      ) : null}
-      <br />
-      <Button onClick={addProduct}>Add Product</Button>
+            ))}
+          </>
+        ) : null}
+        <br />
+        <Button onClick={addProduct}>Add Product</Button>
+      </div>
+      <div className="col-md-6">
+        <button
+          className="me-2"
+          onClick={downloadExcel}
+          style={{
+            backgroundColor: "#609ecc",
+            border: "#7ac536",
+            color: "white",
+            borderRadius: "3px",
+            fontSize: "14px",
+            padding: "5px 10px",
+          }}
+        >
+          Download excel
+        </button>
+        <input type="file" placeholder="Upload file" onChange={uploadFile} />
+        <button
+          onClick={addExcel}
+          style={{
+            backgroundColor: "#609ecc",
+            border: "#7ac536",
+            color: "white",
+            borderRadius: "3px",
+            fontSize: "14px",
+            padding: "5px 10px",
+          }}
+        >
+          Add
+        </button>
+      </div>
     </div>
   );
 }

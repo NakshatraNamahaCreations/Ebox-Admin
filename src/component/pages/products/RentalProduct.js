@@ -6,11 +6,17 @@ import { useNavigate } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import DataTable from "react-data-table-component";
 import { Badge } from "react-bootstrap";
+import { MdDelete, MdMotionPhotosOff } from "react-icons/md";
+import { FaCheck } from "react-icons/fa6";
+import { FaDownload } from "react-icons/fa6";
+import * as XLSX from "xlsx";
 
 function RentalProduct() {
   const [allRentalProduct, setAllRentalProduct] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const Navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [statusType, setStatusType] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,10 +26,12 @@ function RentalProduct() {
           `${apiUrl.BASEURL}${apiUrl.ALL_PRODUCT}`
         );
         if (productRes.status === 200) {
-          const rentalProductRes = productRes.data?.filter(
-            (item) => item.product_type === "rental"
-          );
-          setAllRentalProduct(rentalProductRes);
+          console.log("allRentalProduct", productRes.data);
+          // const rentalProductRes = productRes.data?.filter(
+          //   (item) => item.product_type === "rental"
+          // );
+          setAllRentalProduct(productRes.data?.reverse());
+          // setAllRentalProduct(rentalProductRes?.reverse());
         }
       } catch (error) {
         console.log("error", error);
@@ -34,6 +42,20 @@ function RentalProduct() {
     fetchData();
   }, []);
 
+  const deleteProduct = async (id) => {
+    try {
+      const res = await axios.delete(
+        `${apiUrl.BASEURL}${apiUrl.DELETE_PRODUCT}${id}`
+      );
+      if (res.status === 200) {
+        alert("Product Deleted");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const navigateToDetailedPage = (row) => {
     Navigate("/product/product-details", {
       state: {
@@ -42,33 +64,51 @@ function RentalProduct() {
     });
   };
 
+  const searchResults = allRentalProduct
+    ?.filter((prod) => {
+      if (search) {
+        return (
+          prod.product_name.toLowerCase().includes(search.toLowerCase()) ||
+          prod.vendor_name.toLowerCase().includes(search.toLowerCase()) ||
+          prod.shop_name.toLowerCase().includes(search.toLowerCase())
+        );
+      }
+      return true;
+    })
+    .filter((item) => {
+      if (statusType === "") {
+        return true;
+      }
+      return item.approval_status === (statusType === "true");
+    });
+
   const columns = [
     {
       name: "Product Name",
       selector: (row) => row.product_name,
       sortable: true,
     },
-    // {
-    //   name: "Image",
-    //   selector: (row) => {
-    //     const imageUrl =
-    //       row.product_image && row.product_image.length > 0
-    //         ? `${apiUrl.IMAGEURL}${row.product_image[0]}`
-    //         : "placeholder.jpg";
+    {
+      name: "Image",
+      selector: (row) => {
+        const imageUrl =
+          row.product_image && row.product_image.length > 0
+            ? row.product_image[0]
+            : "placeholder.jpg";
 
-    //     return (
-    //       <div style={{ padding: "5px" }}>
-    //         <img src={imageUrl} alt="Product" style={{ width: "45px" }} />
-    //       </div>
-    //     );
-    //   },
-    //   sortable: false,
-    // },
-    // {
-    //   name: "Price",
-    //   selector: (row) => "₹" + row.product_price,
-    //   sortable: true,
-    // },
+        return (
+          <div style={{ padding: "5px" }}>
+            <img src={imageUrl} alt="Product" style={{ width: "45px" }} />
+          </div>
+        );
+      },
+      sortable: false,
+    },
+    {
+      name: "Price",
+      selector: (row) => "₹" + row.product_price,
+      sortable: true,
+    },
     {
       name: "Vendor Name",
       selector: (row) => row.vendor_name,
@@ -93,7 +133,7 @@ function RentalProduct() {
     {
       name: "Action",
       selector: (row) => (
-        <>
+        <div style={{ display: "flex" }}>
           <div
             style={{
               cursor: "pointer",
@@ -103,40 +143,105 @@ function RentalProduct() {
             title="View"
             onClick={() => navigateToDetailedPage(row)}
           >
-            {/* <div style={{ cursor: "pointer" }} title="View"> */}
             <FaEye size={16} color="white" />
-            {/* </div> */}
           </div>
-        </>
+          <div
+            style={{
+              cursor: "pointer",
+              backgroundColor: "#e91e63",
+              padding: "7px 13px",
+            }}
+            title="Delete"
+            onClick={() => deleteProduct(row._id)}
+          >
+            <MdDelete size={16} color="white" />
+          </div>
+          {/* <div
+            style={{
+              cursor: "pointer",
+              backgroundColor: row.isActive ? "#198754" : "#ffc107",
+              padding: "7px 13px",
+            }}
+            title={row.isActive ? "Active" : "Inactive"}
+          >
+            {row.isActive ? (
+              <FaCheck size={16} color="white" />
+            ) : (
+              <MdMotionPhotosOff size={16} color="white" />
+            )}
+          </div> */}
+        </div>
       ),
     },
   ];
 
+  const downloadReport = () => {
+    const dataToDownload = searchResults.map((item) => ({
+      Product_Name: item.product_name,
+      Vendor: item.vendor_name,
+      Image: `${apiUrl.IMAGEURL}${item.product_image[0]}`,
+      status: item.approval_status ? "Approved" : "Pending",
+      Action: item.isActive ? "Active" : "Inactive",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToDownload);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "vendor");
+    XLSX.writeFile(workbook, "Rental-Products-list.xlsx");
+  };
+
   return (
-    <div>
+    <div style={{ backgroundColor: "white" }}>
       {isLoading && <Loader />}
       {!isLoading && (
         <div>
-          <div style={{ textAlign: "right" }}>
-            <input
-              type="search"
-              // value={serviceName}
-              placeholder="🔍 Search product/vendor/shop..."
-              // onChange={(e) => setServiceName(e.target.value)}
-              style={{
-                fontSize: "14px",
-                padding: "7px",
-                border: "1px solid #ebedf2",
-                outline: 0,
-                width: "25%",
-                borderRadius: "7px",
-              }}
-            />
-            <br /> <br />
+          <div className="row mt-2 mb-1 pt-3 ps-2">
+            <div className="col-md-8">
+              <input
+                type="search"
+                value={search}
+                placeholder="Search product/vendor/shop"
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  fontSize: "14px",
+                  padding: "7px",
+                  border: "1px solid #ebedf2",
+                  outline: 0,
+                  width: "35%",
+                  borderRadius: "7px",
+                }}
+              />
+            </div>
+            <div
+              className="col-md-4 d-flex"
+              style={{ justifyContent: "flex-end" }}
+            >
+              <select
+                style={{
+                  border: "1px solid #ebedf2",
+                  padding: "2px 5px",
+                  borderRadius: "5px",
+                }}
+                value={statusType}
+                onChange={(e) => setStatusType(e.target.value)}
+              >
+                <option value="">Filter</option>
+                <option value="true">Approve</option>
+                <option value="false">Disapprove</option>
+              </select>
+              <FaDownload
+                onClick={downloadReport}
+                className="ms-3 me-5"
+                style={{ cursor: "pointer", marginTop: "10px" }}
+                size={16}
+                color="#2F4E9E"
+              />
+            </div>
           </div>
+
           <DataTable
             columns={columns}
-            data={allRentalProduct}
+            data={searchResults}
             pagination
             //   defaultSortFieldId={1}
           />

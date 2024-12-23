@@ -108,8 +108,8 @@
 .border-left-accent {
   border-left: 3px solid #00007c !important;
 }
-.border-top-for-all-border{
-  border-top: 3px solid #90e447 !important;
+.border-top-for-all-border {
+  border-top: 3px solid #609ecc !important;
 }
 .card-border-1 {
   border-left: 3px solid #00007c !important;
@@ -182,7 +182,7 @@
   background-color: blue !important;
   color: white !important;
 }
-.vendor-profile-background-imge{
+.vendor-profile-background-imge {
   background-image: url("../public//img//profile-bg.jpg");
   background-size: cover !important;
   background-position: 50% !important;
@@ -211,10 +211,11 @@
   margin: 3mm;
 }
 
-.payouts-card{
+.payouts-card {
   border-radius: 5px;
   background-color: #fff;
-  margin-bottom: 30px;  box-shadow: 0 1px 15px 1px rgba(69, 65, 78, .08);
+  margin-bottom: 30px;
+  box-shadow: 0 1px 15px 1px rgba(69, 65, 78, 0.08);
   border-color: #28a745 !important;
   border: 1px solid #dee2e6 !important;
 }
@@ -227,7 +228,7 @@
 .payouts-border-primary {
   border-color: #007bff !important;
 }
-.payouts-card-body{
+.payouts-card-body {
   padding: 1.25rem;
 }
 
@@ -238,8 +239,8 @@
   font-weight: 400;
   line-height: 1.6;
 }
-.payout-amount{
-color: #575962;
+.payout-amount {
+  color: #575962;
 }
 /* @media print {
   body * {

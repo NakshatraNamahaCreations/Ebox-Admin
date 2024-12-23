@@ -32,7 +32,7 @@ function VendorDetails() {
               style={{ width: "80px", height: "80px", borderRadius: "50%" }}
             />
             <div className="mx-3 pt-3">
-              <h4 style={{ fontSize: "20px", color: "#90e447" }}>
+              <h4 style={{ fontSize: "20px", color: "#609ecc" }}>
                 {vendor.vendor_name}{" "}
               </h4>
               <h6 style={{ fontSize: "14px" }}>{vendor.profession}</h6>
@@ -50,7 +50,7 @@ function VendorDetails() {
         <div>
           <div style={{ display: "flex" }}>
             <div>
-              <h4 style={{ fontSize: "2.125rem", color: "#90e447" }}>
+              <h4 style={{ fontSize: "2.125rem", color: "#609ecc" }}>
                 {vendor.vendor_name}{" "}
               </h4>
               <h6 style={{ fontSize: "15px" }}>

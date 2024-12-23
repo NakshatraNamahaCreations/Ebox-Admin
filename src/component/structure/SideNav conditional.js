@@ -20,10 +20,10 @@ function SideNav() {
   const location = useLocation();
   const { pathname } = location;
   const getColor = (path) => {
-    return pathname === path ? "#90e447" : "";
+    return pathname === path ? "#609ecc" : "";
   };
   const getBorderLeft = (path) => {
-    return pathname === path ? "2px solid #90e447" : "";
+    return pathname === path ? "2px solid #609ecc" : "";
   };
 
   const logout = () => {
@@ -53,7 +53,7 @@ function SideNav() {
             >
               <LuBoxes
                 size={25}
-                color="#90e447"
+                color="#609ecc"
                 style={{ marginTop: "-7px" }}
               />{" "}
               NITHYA EVENTS

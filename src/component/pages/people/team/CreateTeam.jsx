@@ -37,6 +37,16 @@ function CreateTeam() {
   const [manageSellProducts, setManageSellProducts] = useState(false);
   const [manageRentalProducts, setManageRentalProducts] = useState(false);
 
+  const chars =
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const string_length = 10;
+  let randomstring = "";
+  for (let i = 0; i < string_length; i++) {
+    let rnum = Math.floor(Math.random() * chars.length);
+    randomstring += chars.substring(rnum, rnum + 1);
+  }
+  console.log("randomstring", randomstring);
+
   const addTeamMember = async () => {
     if (!name || !phoneNumber) {
       alert("Name and Phone number should not empty");
@@ -116,7 +126,9 @@ function CreateTeam() {
               className="input-0-1-134 input-d23-0-1-1126 undefined"
               placeholder="Password"
               type="text"
-              onChange={(e) => setPassword(e.target.value)}
+              value={randomstring}
+              disabled
+              // onChange={(e) => setPassword(e.target.value)}
             />
           </div>
         </div>

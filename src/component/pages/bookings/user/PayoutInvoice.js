@@ -1,3 +1,5 @@
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import moment from "moment";
 import { toWords } from "number-to-words";
 import React from "react";
@@ -14,9 +16,24 @@ function PayoutInvoice() {
   const remainingAmount = product.totalPrice - cgst - sgst;
   // console.log("remainingAmount", remainingAmount);
 
+  const downloadPDF = () => {
+    const invoiceElement = document.getElementById("invoiceContent");
+
+    html2canvas(invoiceElement, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save("payout.pdf");
+    });
+  };
+
   return (
     <div className="m-5">
       <div
+        id="invoiceContent"
         className="p-3 "
         style={{
           backgroundColor: "white",
@@ -29,12 +46,14 @@ function PayoutInvoice() {
           <div className="col-md-6">
             <h6>{product.sellerName}</h6>
           </div>
-          <div className="col-md-6 text-center">
-            <h6>PO{product.orderId}</h6>
-            {/* <div className="text-center" style={{ width: "200px" }}>
-              <hr />
-            </div> */}
-            <div>Invoice Date: {moment().format("LL")} </div>
+          <div style={{ textAlign: "right" }} className="col-md-6">
+            <div>
+              {" "}
+              <b>PO{product.payout_id?.slice(-6).toUpperCase()}</b>
+            </div>
+            <div>
+              <b>Invoice Date: {moment().format("LL")} </b>{" "}
+            </div>
           </div>
         </div>
         <div className="mt-3">
@@ -83,21 +102,39 @@ function PayoutInvoice() {
             {" "}
             <b>
               {" "}
-              Rupees
-              {/* {toWords(remainingAmount).replace(/,/g, "")}  */}
-              only{" "}
+              {toWords(product.payout_amount)
+                .replace(/,/g, "")
+                .toUpperCase()}{" "}
+              Only{" "}
             </b>
           </div>
           <hr />
           <div>
-            <b>Remarks:</b>{" "}
+            <b>Remarks:</b> {product.remark}
           </div>
           <hr />
         </div>
+      </div>
+      <div style={{ textAlign: "right", marginTop: 20 }}>
+        <button
+          style={{
+            color: "white",
+            textDecoration: "none",
+            display: "inline-block",
+            fontSize: "16px",
+            cursor: "pointer",
+            backgroundColor: "#2F4E9E",
+            padding: "3px 5px",
+            borderRadius: "3px",
+            border: 0,
+          }}
+          onClick={downloadPDF}
+        >
+          Download PDF
+        </button>
       </div>
     </div>
   );
 }
 
 export default PayoutInvoice;
-// box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;

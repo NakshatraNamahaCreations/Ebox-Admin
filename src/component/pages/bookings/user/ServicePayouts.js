@@ -12,11 +12,11 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { TbFileTypeXls } from "react-icons/tb";
 import { FaFilter } from "react-icons/fa";
+import * as XLSX from "xlsx";
 import { get } from "../../../../api-services/apiHelper";
 // import styles from "./payout.module.css";
-import * as XLSX from "xlsx";
 
-function Payouts() {
+function ServicePayouts() {
   const Navigate = useNavigate();
   const [userBookingData, setUserBookingData] = useState([]);
   const [payoutData, setPayoutData] = useState([]);
@@ -41,9 +41,13 @@ function Payouts() {
         if (res.status === 200) {
           setUserBookingData(res.data.reverse());
         }
-        const data = await get(apiUrl.GET_PRODUCT_VENDOR);
-        // console.log("data", data);
-        setVendors(data.data.reverse());
+        const data = await get(apiUrl.GET_APPROVED_VENDOR);
+        const filterOnlyServiceVendor = data?.filter(
+          (item) =>
+            item.profession !== "Vendor & Seller" && item.is_approved === true
+        );
+
+        setVendors(filterOnlyServiceVendor.reverse());
 
         const payoutRes = await axios.get(
           `${apiUrl.BASEURL}${apiUrl.GET_ALL_PAYOUTS}`
@@ -68,22 +72,22 @@ function Payouts() {
 
   const calculateTotalBySeller = (data) => {
     return data.map((event) => {
-      const sellerMap = event.product_data.reduce((acc, product) => {
-        if (!acc[product.sellerId]) {
-          acc[product.sellerId] = {
+      const sellerMap = event?.service_data?.reduce((acc, seller) => {
+        if (!acc[seller.id]) {
+          acc[seller.id] = {
             event_name: event.event_name,
-            // ...product,
+            // ...seller,
             event_id: event._id,
             ordered_date: event.ordered_date,
-            seller_id: product.sellerId,
-            seller_name: product.sellerName,
-            commission_percentage: product.commissionPercentage,
-            commission_tax: product.commissionTax,
-            store: product.store,
+            seller_id: seller.id,
+            seller_name: seller.vendorName,
+            commission_percentage: seller.commissionPercentage,
+            commission_tax: seller.commissionTax,
+            store: seller.shopName,
             payment_amount: 0,
           };
         }
-        acc[product.sellerId].payment_amount += product.totalPrice;
+        acc[seller.id].payment_amount += seller.totalPrice;
         return acc;
       }, {});
       const groupedSellers = Object.values(sellerMap);
@@ -97,13 +101,8 @@ function Payouts() {
   const paymentSellers = calculateTotalBySeller(userBookingData).flatMap(
     (ele) => ele.sellers
   );
-
-  console.log(
-    "userBookingData",
-    userBookingData.flatMap((ele) => ele.product_data)
-  );
-
-  // console.log("paymentSellers", paymentSellers);
+  console.log("userBookingData", userBookingData);
+  console.log("paymentSellers", paymentSellers);
   // console.log("payoutData", payoutData);
 
   const payoutSellers = paymentSellers.map((seller) => {
@@ -142,9 +141,9 @@ function Payouts() {
 
     return {
       ...row,
-      commission_amount: parseFloat(commissionPercentage?.toFixed(2)) || 0,
-      tax_amount: parseFloat(commissionTax?.toFixed(2)) || 0,
-      payout_amount: parseFloat(totalDeduction?.toFixed(2)) || 0,
+      commission_amount: parseFloat(commissionPercentage.toFixed(2)),
+      tax_amount: parseFloat(commissionTax.toFixed(2)),
+      payout_amount: parseFloat(totalDeduction.toFixed(2)),
     };
   });
   // console.log("processedRows", processedRows);
@@ -190,7 +189,6 @@ function Payouts() {
     setOrderFromDate("");
     setOrderToDate("");
   };
-  console.log("filteredRows", filteredRows);
 
   // CALCULATION FOR COMMISSION---------------------
   // OLD ONE- WORKING
@@ -219,7 +217,7 @@ function Payouts() {
     (acc, value) => acc + value.payout_amount,
     0
   );
-  // console.log("getPendings", getPendings);
+  // console.log("pendingAmount", pendingAmount);
 
   // INITIALIZED
   const getInitialized = processedRows?.filter(
@@ -253,7 +251,6 @@ function Payouts() {
     setIsModalOpen(true);
   };
 
-  // console.log("viewPayouts", viewPayouts);
   // console.log("pendingAmount", pendingAmount);
   const goInvoice = (row) => {
     Navigate("/payout-invoice", {
@@ -297,7 +294,7 @@ function Payouts() {
     },
     {
       header: "Order Amount ₹",
-      data: "₹" + rowData?.payment_amount?.toFixed(2),
+      data: "₹" + rowData?.payment_amount.toFixed(2),
     },
     {
       header: "Commission %",
@@ -382,7 +379,7 @@ function Payouts() {
       name: "Event",
       selector: (row) => (
         <div>
-          <div>Ord.ID: #{row.event_id?.slice(-6)?.toUpperCase()}</div>
+          <div>Ord.ID: #{row.event_id?.slice(-6).toUpperCase()}</div>
           <div>{row.event_name}</div>
         </div>
       ),
@@ -516,7 +513,7 @@ function Payouts() {
       Event_Name: item.event_name,
       Seller_Name: item.seller_name,
       Payment_Amount: "₹" + item.payment_amount,
-      Commission_Percentage: (item.commission_percentage ?? 0) + "%",
+      Commission_Percentage: (item.commission_percentage ?? 0).toFixed(2) + "%",
       Commission_Amount: "₹" + item.commission_amount,
       Commission_Tax: (item.commission_tax ?? 0) + "%",
       Tax_Amount: "₹" + item.tax_amount,
@@ -525,8 +522,8 @@ function Payouts() {
 
     const worksheet = XLSX.utils.json_to_sheet(dataToDownload);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Product");
-    XLSX.writeFile(workbook, "payout-reports-product.xlsx");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Service");
+    XLSX.writeFile(workbook, "payout-reports-service.xlsx");
   };
 
   return (
@@ -538,7 +535,7 @@ function Payouts() {
           className="headerTitle-0-1-70 row p-3"
           style={{ borderBottom: "1px solid #f4f9fd" }}
         >
-          <div className="col-md-8">Product Payouts</div>
+          <div className="col-md-8">Service Payouts</div>
           <div className="col-md-4 row">
             <Button
               variant="outline-success"
@@ -804,7 +801,6 @@ function Payouts() {
           pagination
         />
       </div>
-      {/*================ Processed modal ==================*/}
       <Modal size="lg" onHide={() => setShowModal(false)} show={showModal}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
@@ -894,4 +890,4 @@ const inlineStyles = {
   },
 };
 
-export default Payouts;
+export default ServicePayouts;

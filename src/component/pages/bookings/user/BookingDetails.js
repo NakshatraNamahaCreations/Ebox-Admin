@@ -112,14 +112,23 @@ function BookingDetails() {
             <th style={styles.tableHeader}>Event Name</th>
             <td style={styles.tableData}>{bookingData.event_name} </td>
           </tr>
-          {/* <tr style={styles.tableRow}>
-            <th style={styles.tableHeader}>No of Person</th>
-            <td style={styles.tableData}>{bookingData.noOfPerson} </td>
-          </tr> */}
-          {/* <tr style={styles.tableRow}>
-            <th style={styles.tableHeader}>Celebrity</th>
-            <td style={styles.tableData}>Sridhar Vembu </td>
-          </tr> */}
+          <tr style={styles.tableRow}>
+            <th style={styles.tableHeader}>Order Status</th>
+            <td style={styles.tableData}>{bookingData.order_status} </td>
+          </tr>
+          {bookingData.order_status === "Order Rescheduled" ||
+          bookingData.order_status === "Order Cancelled" ? (
+            <tr style={styles.tableRow}>
+              <th style={styles.tableHeader}>Reason</th>
+              <td style={styles.tableData}>
+                {bookingData.order_status === "Order Rescheduled"
+                  ? bookingData.reschedule_remark
+                  : bookingData.order_status === "Order Cancelled"
+                  ? bookingData.cancel_reason
+                  : ""}
+              </td>
+            </tr>
+          ) : null}
           <tr style={styles.tableRow}>
             <th style={styles.tableHeader}>Venue Name</th>
             <td style={styles.tableData}>{bookingData.venue_name} </td>
@@ -307,7 +316,7 @@ const styles = {
     fontSize: "14px",
   },
   buttonForEveything: {
-    backgroundColor: "#90e447",
+    backgroundColor: "#609ecc",
     border: "#7ac539",
     color: "black",
     borderRadius: "3px",

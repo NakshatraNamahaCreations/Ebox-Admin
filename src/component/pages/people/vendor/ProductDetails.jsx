@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { apiUrl } from "../../../../api-services/apiContents";
 import ReactPlayer from "react-player";
 import axios from "axios";
+import { Button, Modal } from "react-bootstrap";
+import Switch from "react-switch";
 
 function ProductDetails() {
   const location = useLocation();
   const product = location.state?.prooduct || null;
   const navigate = useNavigate();
+  const [reason, setReason] = useState("");
+  const [showModal, setShowModal] = useState(false);
   console.log("prooduct", product);
 
   const makeProductApproval = async () => {
@@ -27,10 +31,15 @@ function ProductDetails() {
     }
   };
 
+  const openPop = () => setShowModal(true);
+
   const makeProductDisapproval = async () => {
     try {
       const res = await axios.put(
-        `${apiUrl.BASEURL}${apiUrl.PRODUCT_DISAPPROVE}${product?._id}`
+        `${apiUrl.BASEURL}${apiUrl.PRODUCT_DISAPPROVE}${product?._id}`,
+        {
+          reason_for_disapprove: reason,
+        }
       );
       if (res.status === 200) {
         console.log(res.data);
@@ -40,6 +49,75 @@ function ProductDetails() {
       }
     } catch (error) {
       console.error("Error:", error);
+    }
+  };
+  const toggleServiceStatus = async (id, currentStatus) => {
+    try {
+      const res = await axios.put(
+        `${apiUrl.BASEURL}${apiUrl.PRODUCT_STATUS_CHANGE}${id}`,
+        {
+          isActive: !currentStatus, // Toggle the current status
+        }
+      );
+      if (res.status === 200) {
+        alert(`Product is ${currentStatus ? "Inactivated" : "Activated"}`);
+        navigate(-1);
+        // fetchVendors(); // Refresh the service list
+      }
+    } catch (error) {
+      console.error("Error updating service status:", error);
+    }
+  };
+  const [galleryImages, setGalleryImages] = useState([]);
+
+  const handleDocumentUpload = (e, type) => {
+    const files = Array.from(e.target.files);
+    if (type === "image") {
+      setGalleryImages(files);
+    }
+  };
+
+  const addImages = async () => {
+    try {
+      const formData = new FormData();
+      galleryImages.forEach((file, index) => {
+        formData.append("images", file, file.name);
+      });
+
+      const config = {
+        url: `${apiUrl.ADD_PRODUCT_IMAGES}${product._id}`,
+        method: "put",
+        baseURL: apiUrl.BASEURL,
+        headers: { "Content-Type": "multipart/form-data" },
+        data: formData,
+      };
+
+      const response = await axios(config);
+
+      if (response.status === 200) {
+        alert(response.data.message);
+        console.log("Response:", response.data);
+        navigate(-1);
+      } else {
+        alert("Error", "Error while adding product");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.message);
+        if (error.response) {
+          console.error("Response data:", error.response.data);
+          alert(
+            "Error",
+            error.response.data.message || "Error while adding product"
+          );
+        } else if (error.request) {
+          console.error("Request data:", error.request);
+          alert("Error", "No response received from server");
+        }
+      } else {
+        console.error("Unknown error:", error);
+        alert("Error", "An unknown error occurred");
+      }
     }
   };
 
@@ -81,6 +159,30 @@ function ProductDetails() {
             style={{ color: "black", fontSize: "23px", fontWeight: "bold" }}
           >
             {product?.product_name}
+          </div>
+          {/* add product image */}
+          <div>
+            <input
+              className="mb-1"
+              accept="image/jpeg,image/jpg,image/png,image/webp"
+              id="icon-button-file"
+              type="file"
+              multiple
+              onChange={(e) => handleDocumentUpload(e, "image")}
+            />{" "}
+            <button
+              onClick={addImages}
+              style={{
+                backgroundColor: "#609ecc",
+                border: "#7ac536",
+                color: "white",
+                borderRadius: "3px",
+                fontSize: "14px",
+                padding: "5px 10px",
+              }}
+            >
+              Add Image
+            </button>
           </div>
         </div>
       </div>
@@ -199,7 +301,7 @@ function ProductDetails() {
                 product?.product_image.map((image, index) => (
                   <div key={index} className="col-md-4 mb-2">
                     <img
-                      src={`${apiUrl.IMAGEURL}${image}`}
+                      src={image}
                       alt="product image"
                       style={{ width: "80%", height: "100px" }}
                     />
@@ -213,7 +315,7 @@ function ProductDetails() {
             style={{ border: "1px solid #e4e4e4", borderRadius: "7px" }}
           >
             <ReactPlayer
-              url={`${apiUrl.IMAGEURL}${product?.product_video}`}
+              url={product?.product_video}
               width={460}
               height={223}
               controls={true}
@@ -290,11 +392,9 @@ function ProductDetails() {
               border: 0,
               color: "white",
               borderRadius: "3px",
-              fontSize: "17px",
-              fontWeight: "500",
               padding: "5px 10px",
             }}
-            onClick={makeProductDisapproval}
+            onClick={openPop}
           >
             Disapprove
           </button>
@@ -306,8 +406,6 @@ function ProductDetails() {
               border: 0,
               color: "white",
               borderRadius: "3px",
-              fontSize: "17px",
-              fontWeight: "500",
               padding: "5px 10px",
             }}
             onClick={makeProductApproval}
@@ -315,7 +413,78 @@ function ProductDetails() {
             Approve
           </button>
         )}
+        {product.approval_status && (
+          <div className="ms-3">
+            <lable
+              style={{ color: "#333", fontSize: "14px", fontWeight: "600" }}
+            >
+              <span
+                style={{
+                  color: product.isActive ? "#35d482" : "red",
+                  // fontSize: "20px",
+                }}
+              >
+                {product.isActive ? "Active" : "In Active"}{" "}
+              </span>{" "}
+            </lable>
+            <span>
+              <Switch
+                className="mt-2"
+                onChange={() =>
+                  toggleServiceStatus(product._id, product.isActive)
+                }
+                checked={product.isActive}
+                onColor="#080"
+                offHandleColor="#ddd"
+                onHandleColor="#ddd"
+                offColor="#888"
+                handleDiameter={20}
+                uncheckedIcon={false}
+                checkedIcon={false}
+                height={15}
+                width={35}
+              />
+            </span>
+          </div>
+        )}
       </div>
+      <Modal
+        size="sm"
+        centered
+        onHide={() => setShowModal(false)}
+        show={showModal}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Disapprove Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            Reason for disapproval
+            <span style={{ color: "Red" }}> *</span>
+            <textarea
+              className="input-0-1-134 my-2 input-d21-0-1-1124 undefined"
+              type="text"
+              style={{ borderRadius: "7px" }}
+              onChange={(e) => setReason(e.target.value)}
+            />{" "}
+            <Button
+              style={{
+                border: 0,
+                fontSize: "14px",
+                backgroundColor: "#ff005d",
+                color: "white",
+                borderRadius: "7px",
+                boxShadow: "0px 1px 3px 0px #5d5d5d",
+              }}
+              onClick={makeProductDisapproval}
+            >
+              Disapprove
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

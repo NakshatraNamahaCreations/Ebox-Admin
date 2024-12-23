@@ -10,6 +10,7 @@ function Calculator() {
   const [result, setResult] = React.useState(null);
   const [vendors, setVendors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [profileData, setProfileData] = useState({});
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -17,6 +18,13 @@ function Calculator() {
       const res = await axios.get(`${apiUrl.BASEURL}${apiUrl.GET_ALL_VENDOR}`);
       if (res.status === 200) {
         setVendors(res.data);
+      }
+      const payoutConfigRes = await axios.get(
+        `${apiUrl.BASEURL}${apiUrl.GET_PAYOUT_CONFIG}`
+      );
+      if (payoutConfigRes.status === 200) {
+        const profile = payoutConfigRes.data.profile;
+        setProfileData(profile);
       }
     } catch (error) {
       console.error("Failed to fetch vendors:", error);
@@ -42,7 +50,8 @@ function Calculator() {
     setSelectedVendor(findVendor ? findVendor : null);
   };
 
-  const razorPay = (parseInt(inputAmount) * 2) / 100;
+  const razorPay =
+    (parseInt(inputAmount) * profileData?.razorpay_percentage) / 100;
 
   const userPayableAmount = parseInt(inputAmount) + parseInt(razorPay);
 
@@ -61,7 +70,9 @@ function Calculator() {
 
   const tableContent = [
     {
-      head: "Razorpay Fee @2%",
+      head: `Razorpay Fee @${
+        profileData?.razorpay_percentage ? profileData?.razorpay_percentage : 0
+      }%`,
       value: razorPay.toFixed(2),
       color: "#f3545d",
       fontWeight: "400",

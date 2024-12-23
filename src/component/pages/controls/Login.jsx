@@ -52,7 +52,7 @@ function Login() {
           /> */}
           <h3 style={{ fontSize: "30px" }}>
             {" "}
-            <LuBoxes size={25} color="#90e447" /> Nithya Events
+            <LuBoxes size={25} color="#609ecc" /> Nithya Events
           </h3>
           <h3 style={{ fontSize: "22px" }}>Multiuser - Dashboard</h3>
         </div>
